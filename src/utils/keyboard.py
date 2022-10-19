@@ -1,0 +1,5 @@
+from curses import KEY_BACKSPACE, KEY_ENTER
+
+
+KEY_BACKSPACE = 8
+KEY_ENTER = 10

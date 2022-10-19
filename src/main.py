@@ -1,16 +1,19 @@
-import re
 import colorama
 from termcolor import colored
 import art
 import datetime
 import os
 import platform
+import curses
+
+from screens import login
 
 from utils import net
+import data
 
 VERSION = '0.1.0'
 
-def main():
+def main(stdscr):
     header = art.text2art('Spyder')
 
     print(header)
@@ -19,6 +22,16 @@ def main():
 
     infobox()
     update()
+    
+    curses.noecho()
+
+    login_data = data.DataObject() 
+
+    login_screen = login.Login(stdscr, login_data)
+    login_screen.show()
+
+
+    curses.endwin()
 
 def infobox():
     time_ = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -47,4 +60,4 @@ def update():
 if __name__ == '__main__':
     colorama.init()
 
-    main()
+    curses.wrapper(main)

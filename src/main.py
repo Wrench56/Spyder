@@ -1,6 +1,5 @@
 import colorama
 from termcolor import colored
-import art
 import datetime
 import os
 import platform
@@ -8,16 +7,16 @@ import curses
 
 from screens import login
 
-from utils import net
+from utils import net, art, colors
 import data
 
 VERSION = '0.1.0'
 
 def main(stdscr):
-    header = art.text2art('Spyder')
+    # Create color pairs
 
-    print(header)
-    print(colored(' '*20+'Chatting safely!', 'red'))
+    print(art.HEADER)
+    print(colored(' '*20+art.MOTTO, 'red'))
     print('='*40)
 
     infobox()
@@ -25,10 +24,11 @@ def main(stdscr):
     
     curses.noecho()
 
+    colors.init()
+
     login_data = data.DataObject() 
 
     login_screen = login.Login(stdscr, login_data)
-    login_screen.show()
 
 
     curses.endwin()

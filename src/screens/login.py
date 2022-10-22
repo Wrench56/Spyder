@@ -63,6 +63,10 @@ class Login(screen.Screen):
                 y, x = self.stdscr.getmaxyx()
                 if self.resize_check(x, y):
                     self.resize(x, y)
+                if box_index == 0:
+                    self.username_textbox.update_cursor()
+                else:
+                    self.password_textbox.update_cursor()
             elif ch == keyboard.KEY_TAB:
                 if box_index == 0:
                     box_index = 1

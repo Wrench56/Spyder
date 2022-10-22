@@ -3,12 +3,8 @@ from utils import keyboard
 import curses
 
 class Textbox(widget.Widget):
-    def __init__(self, stdscr, width = 20, height = 100):
+    def __init__(self, stdscr, width = 20, height = 100, show_chars = False):
         super().__init__(stdscr)
-
-        self.label = label.Label(self.stdscr,'@')
-        self.label.set_size(lambda x: 10, lambda y: 10)
-        self.label.draw(0, 0)
 
         self.buffer = ['']
 
@@ -20,33 +16,41 @@ class Textbox(widget.Widget):
         self.width = width
         self.height = height
 
+        self.show_chars = show_chars
 
         self.pad = curses.newpad(self.height, self.width)
         self.pad.scrollok(True)
 
-    def draw(self, x, y):
-        self.last_x = x
-        self.last_y = y
+    def draw(self):
+        x, y = super().getxy()
 
         self.empty()
         for i, line in enumerate(self.buffer):
+            if self.show_chars:
+                line = len(line)*self.show_chars
             self.pad.addstr(i, 0, line)
 
+        sy, sx = self.stdscr.getbegyx()
         ly = self.lambda_y(y)
         lx = self.lambda_x(x)
-        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, ly, lx, ly+self.height, lx+self.width)
-        self.stdscr.refresh()
+        self.move_cursor(lx, ly)
+        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))
 
     def input(self, ch):
+        x, y = super().getxy()
+
         if ch == keyboard.KEY_BACKSPACE:
             if self.cur_x > 0:
-                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x-1] + self.buffer[self.cur_y][(self.cur_x+1):]
+                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x-1] + self.buffer[self.cur_y][(self.cur_x):]
                 self.cur_x -= 1
-                self.pad.addstr(self.cur_y, self.cur_x, ' ')
+        elif ch == keyboard.KEY_DELETE:
+            if self.cur_x < self.lambda_w(x):
+                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x] + self.buffer[self.cur_y][(self.cur_x+1):]
         elif ch == keyboard.KEY_ENTER:
-            self.cur_y += 1
-            self.cur_x = 0
-            self.buffer.append('')
+            if self.pad_pos_y+1 < self.height:
+                self.cur_y += 1
+                self.cur_x = 0
+                self.buffer.append('')
         elif ch == curses.KEY_DOWN:
             if self.pad_pos_y < self.pad.getyx()[0] - 1:
                 self.cur_y += 1
@@ -56,19 +60,34 @@ class Textbox(widget.Widget):
             if self.pad_pos_y > 0:
                 self.cur_y -= 1
                 self.pad_pos_y -= 1
+        elif ch == curses.KEY_LEFT:
+            if self.cur_x > 0:
+                self.cur_x -= 1
+        elif ch == curses.KEY_RIGHT:
+            if self.cur_x < self.lambda_w(x):
+                self.cur_x += 1
         else:
-            self.cur_x += 1
-            self.buffer[self.cur_y] += chr(ch)
+            if self.cur_x < self.lambda_w(x):
+                self.cur_x += 1
+                self.buffer[self.cur_y] += chr(ch)
             
-            
-        self.label.set_text(str(self.cur_x))
-        self.draw(self.last_x, self.last_y)
-        self.stdscr.move(self.cur_y, self.cur_x)
-        self.stdscr.refresh()
+        self.draw()
 
-    def set_size(self, lambda_x, lambda_y):
-        super().set_size(lambda_x, lambda_y)
+        lx, ly = self.lambda_x(x), self.lambda_y(y)
+        self.move_cursor(lx, ly)
+
+    def move_cursor(self, lx, ly):
+        self.stdscr.cursyncup()
+        self.stdscr.move(ly+self.cur_y, lx+self.cur_x)
+
+    def update_cursor(self): #? Most likely not needed
+        x, y = super().getxy()
+        lx, ly = self.lambda_x(x), self.lambda_y(y)
+
+        self.move_cursor(lx, ly)
+
+
 
     def empty(self):
         for y, line in enumerate(self.buffer):
-            self.stdscr.addstr(self.lambda_y(self.last_x)+y, self.lambda_x(self.last_x), ' '*len(line))
+            self.pad.addstr(y, 0, ' '*(len(line)+1)) # +1 because of the backspace operation...

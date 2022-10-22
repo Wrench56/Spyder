@@ -3,7 +3,7 @@ import socket
 
 def connection():
     try:
-        requests.get('https://google.com', timeout=1.0)
+        requests.get('https://google.com', timeout=5.0)
         return True
     except requests.exceptions.ConnectTimeout:
         return False

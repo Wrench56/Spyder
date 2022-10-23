@@ -86,8 +86,9 @@ class Textbox(widget.Widget):
 
         self.move_cursor(lx, ly)
 
-
-
     def empty(self):
         for y, line in enumerate(self.buffer):
             self.pad.addstr(y, 0, ' '*(len(line)+1)) # +1 because of the backspace operation...
+    
+    def get_text(self):
+        return '\n'.join(self.buffer)

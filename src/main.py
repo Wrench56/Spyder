@@ -5,10 +5,10 @@ import os
 import platform
 import curses
 
-from screens import login
+from screens import login, chat
 
 from utils import net, art, colors
-import data
+from data import login_structs
 
 VERSION = '0.1.0'
 
@@ -26,10 +26,11 @@ def main(stdscr):
 
     colors.init()
 
-    login_data = data.DataObject() 
-
+    login_data = login_structs.LoginData() 
     login_screen = login.Login(stdscr, login_data)
+    del login_screen # Not necessarily needed
 
+    chat_screen = chat.Chat(stdscr, login_data)
 
     curses.endwin()
 

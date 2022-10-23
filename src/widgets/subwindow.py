@@ -1,5 +1,7 @@
 from widgets import widget
 
+import curses
+
 class Subwindow(widget.Widget):
     def __init__(self, stdscr, border=True):
         self.border = border
@@ -9,8 +11,16 @@ class Subwindow(widget.Widget):
     def draw(self):
         x, y = super().getxy()
 
-        self.window.mvwin(0, 0) #! Do NOT delete this: this saves you from a lot of curses error
-        self.window.resize(1, 1) #! Do NOT delete this: this saves you from a lot of curses error
+        self.window.refresh() #? Is this needed?
+
+        # I have no idea why the previous version failed, but this is working pretty well!
+        try: #! Do NOT delete this: this saves you from a lot of curses error
+            self.window.resize(1, 1) 
+            self.window.mvwin(0, 0)
+        except curses.error:
+            self.window.mvwin(0, 0)
+            self.window.resize(1, 1)
+        
         self.window.mvwin(self.lambda_y(y), self.lambda_x(x))
         self.window.resize(self.lambda_h(y), self.lambda_w(x))
         if self.border:

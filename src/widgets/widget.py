@@ -5,6 +5,9 @@ class Widget():
         self.lambda_x = lambda x: x
         self.lambda_y = lambda y: y
 
+        self.last_x = 0
+        self.last_y = 0
+
     def set_size(self, lambda_x, lambda_y, lambda_w, lambda_h):
         self.lambda_x = lambda_x
         self.lambda_y = lambda_y

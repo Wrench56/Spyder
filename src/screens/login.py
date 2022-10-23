@@ -6,9 +6,9 @@ import curses
 import math
 
 class Login(screen.Screen):
-    def __init__(self, stdscr, dataobj) -> None:
+    def __init__(self, stdscr, struct) -> None:
         super().__init__(stdscr)
-        self.dataobj = dataobj
+        self.struct = struct
 
         # Rename terminal
         terminal.rename_terminal('Spyder - Login')
@@ -74,6 +74,19 @@ class Login(screen.Screen):
                 else:
                     box_index = 0
                     self.username_textbox.update_cursor()
+            elif ch == keyboard.KEY_ENTER:
+                username = self.username_textbox.get_text()
+                password = self.password_textbox.get_text()
+                if username == '' or password == '':
+                    print('We have a problem!')
+                    continue
+                    
+                self.struct.username = username
+                self.struct.password = password
+
+                # Exit the screen
+                return
+
             else:
                 if box_index == 0:
                     self.username_textbox.input(ch)

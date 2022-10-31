@@ -17,7 +17,6 @@ def main():
         logging.config.dictConfig(config)
     logging.addLevelName(logging.WARNING, 'WARN')
     logging.addLevelName(logging.CRITICAL, 'CRIT')
-    logger = logging.getLogger()
 
     signal.signal(signal.SIGTERM, terminate)
     signal.signal(signal.SIGINT, terminate)
@@ -28,7 +27,7 @@ def main():
     print('\n          To exit the program press CTRL+Q!\n')
     keyboard.add_hotkey('ctrl+q', terminate)
 
-    logger.info('Server starting...')
+    logging.info('Server starting...')
     network_server.start('0.0.0.0', 50030)
 
 def terminate():

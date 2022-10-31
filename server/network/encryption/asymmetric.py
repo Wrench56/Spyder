@@ -1,0 +1,22 @@
+from typing import ByteString
+import rsa
+
+# Simple wrapper module for rsa
+# Later on I MIGHT change to pycryptodome because of effectiveness (as it uses C modules as well)
+
+class Key:
+    def __init__(self, key) -> None:
+        self.key = key
+
+    def to_bytes(self) -> ByteString:
+        return self.key.save_pkcs1(format='DER')
+    
+def generate_keys():
+    public_key, private_key = rsa.newkeys(1024)
+    return Key(public_key), Key(private_key)
+
+def encrypt(string: str, key: Key) -> ByteString:
+    return rsa.encrypt(string.encode(), key.key)
+
+def decrypt(string: ByteString, key: Key) -> str:
+    return rsa.decrypt(string, key.key).decode()

@@ -4,8 +4,12 @@ import datetime
 import os
 import platform
 import curses
+import logging
+import logging.config
+import yaml
 
 from screens import login, chat
+from client import client
 
 from utils import net, art, colors
 from data import login_structs
@@ -13,6 +17,8 @@ from data import login_structs
 VERSION = '0.1.0'
 
 def main(stdscr):
+    setup()
+
     # Create color pairs
 
     print(art.HEADER)
@@ -57,6 +63,15 @@ def infobox():
 
 def update():
     pass
+
+def setup():
+    with open('./config/logger.config.yaml', 'r') as f:
+        config = yaml.safe_load(f.read())
+        logging.config.dictConfig(config)
+    logging.addLevelName(logging.WARNING, 'WARN')
+    logging.addLevelName(logging.CRITICAL, 'CRIT')
+    logging.info('Starting client...')
+
 
 if __name__ == '__main__':
     colorama.init()

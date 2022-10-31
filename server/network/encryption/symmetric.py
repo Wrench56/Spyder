@@ -6,8 +6,8 @@ def generate():
 def convert(key):
     return Fernet(key)
 
-def encrypt(string: str, key):
-    return key.encrypt(string.encode())
+def encrypt(string: bytes, key):
+    return key.encrypt(string)
 
-def decrypt(string: str, key):
+def decrypt(string: bytes, key):
     return key.decrypt(string)

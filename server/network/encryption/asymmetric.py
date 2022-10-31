@@ -19,8 +19,8 @@ def generate_keys():
     public_key, private_key = rsa.newkeys(1024)
     return Key(public_key), Key(private_key)
 
-def encrypt(string: str, key: Key) -> ByteString:
-    return rsa.encrypt(string.encode(), key.key)
+def encrypt(string: bytes, key: Key) -> bytes:
+    return rsa.encrypt(string, key.key)
 
-def decrypt(string: ByteString, key: Key) -> str:
-    return rsa.decrypt(string, key.key).decode()
+def decrypt(string: bytes, key: Key) -> bytes:
+    return rsa.decrypt(string, key.key)

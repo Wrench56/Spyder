@@ -5,11 +5,15 @@ import rsa
 # Later on I MIGHT change to pycryptodome because of effectiveness (as it uses C modules as well)
 
 class Key:
-    def __init__(self, key) -> None:
-        self.key = key
+    def __init__(self, key = None) -> None:
+        if key is not None:
+            self.key = key
 
     def to_bytes(self) -> ByteString:
         return self.key.save_pkcs1(format='DER')
+    
+    def from_bytes(self, bkey) -> None:
+        self.key = rsa.PublicKey.load_pkcs1(bkey, format='DER')
     
 def generate_keys():
     public_key, private_key = rsa.newkeys(1024)

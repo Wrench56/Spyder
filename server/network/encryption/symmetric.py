@@ -10,4 +10,4 @@ def encrypt(string: str, key):
     return key.encrypt(string.encode())
 
 def decrypt(string: str, key):
-    return key.decode(string)
+    return key.decrypt(string)

@@ -11,7 +11,7 @@ class DestroyableThread(threading.Thread):
         self._stop_event = threading.Event()
 
     def kill(self):
-        logging.info(f'Killing {self.getName()}...')
+        logging.debug(f'Killing {self.getName()}...')
         self._stop_event.set()
 
     def killed(self):

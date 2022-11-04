@@ -1,9 +1,12 @@
 import socket
 import atexit
 import logging
+import json
 
 from encryption import symmetric, asymmetric, rndinjection as rndi
 from utils import memory, threads
+from utils.operations import handler, login
+from data.structs import client_struct
 
 class Server(socket.socket):
     def __init__(self):
@@ -26,15 +29,15 @@ class Server(socket.socket):
             self.listen()
             try:
                 conn, _ = self.accept()
-                new_user_thread = threads.SocketThread(target=self.handle_login, args=(conn,))
+                new_user_thread = threads.SocketThread(target=self.handle_login, args=(conn, len(self.threads)))
                 new_user_thread.setName(f'SocketThread#{len(self.threads)}')
-                logging.info('New client connected!')
+                logging.info(f'New client connected! Active clients: {len(self.threads)}')
                 self.threads.append(new_user_thread)
                 new_user_thread.start()
             except OSError: # On closing, socket will be deleted, thus socket.accept won't work!
                 pass
 
-    def handle_login(self, conn: socket.socket):
+    def handle_login(self, conn: socket.socket, thread_number: int):
         magic_sentence = conn.recv(1024)
         if magic_sentence.decode() != 'WeAreSpyder':
             # Against crawlers & such: #savesomememory
@@ -51,8 +54,41 @@ class Server(socket.socket):
         memory.erase_variable(fernet_key_encoded)
 
         conn.send(symmetric.encrypt(rndi.encrypt('UnitedWeStand').encode(), fernet_key)) # Send magic answer
-        logging.info('Client verified!')
+        logging.debug('Client verified!')
 
+        self.handle_operations(conn, fernet_key)
+
+        # Kill thread & GC
+        self.threads[thread_number].kill()
+        del self.threads[thread_number]
+
+
+    def handle_operations(self, conn: socket.socket, fernet_key):
+        client_data = client_struct.ClientData()
+        client_data.socket = conn
+        client_data.fernet_key = fernet_key
+
+        while True:
+            try:
+                message_encoded = conn.recv(1024)
+            except ConnectionResetError:
+                logging.warn('Client closed connection unexpectedly!')
+                break
+
+            if message_encoded == b'': # Disconnected!
+                logging.warn('Client closed connection unexpectedly!')
+                break
+
+            message = rndi.decrypt(symmetric.decrypt(message_encoded, fernet_key).decode())
+            logging.debug(f'New operation received: {message}')
+            try:
+                op_json = json.loads(message)
+            except json.decoder.JSONDecodeError:
+                logging.error('Client sent invalid operation format!')
+            
+            client_data.new_json = op_json
+            handler.handle_operation(client_data)
+        return
 
     def kill_threads(self):
         while True:

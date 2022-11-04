@@ -8,6 +8,8 @@ import atexit
 import signal
 
 import server
+import global_
+from data import reader
 
 def main():
     colorama.init()
@@ -26,6 +28,12 @@ def main():
 
     print('\n          To exit the program press CTRL+Q!\n')
     keyboard.add_hotkey('ctrl+q', terminate)
+
+    logging.info('Setting up JSON database readers!')
+    global_.user_reader = reader.UserReader('./data/json/users.json')
+    global_.user_reader.open()
+    global_.user_data_reader = reader.UserDataReader('./data/json/userdata.json')
+    global_.user_data_reader.open()
 
     logging.info('Server starting...')
     network_server.start('0.0.0.0', 50030)

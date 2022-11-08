@@ -17,7 +17,14 @@ class Server(socket.socket):
         atexit.register(self.cleanup)
 
     def start(self, ip, port):
-        self.bind((ip, port))
+        try:
+            self.bind((ip, port))
+        except OSError as e:
+            if e.args[0] == 10048: # Port already in use!
+                logging.critical('The specified port for the server is already in use!')
+                exit()
+
+        
 
         accept_new_thread = threads.DestroyableThread(target=self.accept_new)
         accept_new_thread.setName('AcceptNewUserThread')

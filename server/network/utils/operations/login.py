@@ -1,6 +1,6 @@
 import logging
 
-from encryption import symmetric, rndinjection as rndi
+from utils.operations import sender
 import global_
 
 def handle(client_data):
@@ -33,4 +33,4 @@ def handle(client_data):
             message = 'F'
             client_data.is_authenticated = False
 
-    client_data.socket.send(symmetric.encrypt(rndi.encrypt(message).encode(), client_data.fernet_key)) # S as [S]uccess, F as [F]ailure
+    sender.send(client_data, message)

@@ -1,0 +1,7 @@
+debug:
+  level: DEBUG
+
+network:
+  name: 'SPYDER_MAIN'
+
+

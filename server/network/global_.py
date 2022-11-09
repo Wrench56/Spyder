@@ -1,3 +1,2 @@
-NETWORK_NAME = 'SPYDER_MAIN'
-
+config = None
 user_reader = None

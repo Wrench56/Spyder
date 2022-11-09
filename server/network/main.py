@@ -17,6 +17,7 @@ def main():
     with open('./config/logger.config.yaml', 'r') as f:
         config = yaml.safe_load(f.read())
         logging.config.dictConfig(config)
+        f.close()
     logging.addLevelName(logging.WARNING, 'WARN')
     logging.addLevelName(logging.CRITICAL, 'CRIT')
 
@@ -32,6 +33,12 @@ def main():
     logging.info('Setting up JSON database readers!')
     global_.user_reader = reader.UserReader('./data/json/users.json')
     global_.user_reader.open()
+
+    logging.info('Loading configuration file!')
+    with open('./config/config.yaml') as f:
+        global_.config = yaml.safe_load(f)
+        f.close()
+    logging.getLogger().setLevel(global_.config['debug']['level'])
 
     logging.info('Server starting...')
     network_server.start('0.0.0.0', 50030)

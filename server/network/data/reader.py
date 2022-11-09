@@ -36,11 +36,11 @@ class UserReader(Reader):
             'username': username,
             'hash': hash_
         })
-        self.write_db()
+        self.write()
 
         return True
 
-    def update_password(self, username, new_hash):
+    def update_field(self, username, field, new_value, log_string):
         entry_index = None
         
         for i, user_entry in enumerate(self.buffer.get('users')):
@@ -48,12 +48,20 @@ class UserReader(Reader):
                 entry_index = i
 
         if entry_index is None:
-            logging.warning('User does not exits! Can\'t change hash!')
-            return
+            logging.warning(f'User does not exits! Can\'t change {log_string}!')
+            return False
 
-        self.buffer['users'][entry_index]['hash'] = new_hash
-        logging.debug('Client changed password hash successfully!')
+        self.buffer['users'][entry_index][field] = new_value
         self.write()
+        logging.debug(f'Client changed {log_string} successfully!')
+
+        return True
+        
+    def update_password(self, username, new_hash):
+        return self.update_field(username, 'hash', new_hash, log_string='password hash')
+
+    def update_token(self, username, token):
+        return self.update_field(username, 'token', token, log_string='authentication token')
 
     def write(self):
         with open(self.path, 'w') as f:

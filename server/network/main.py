@@ -32,8 +32,6 @@ def main():
     logging.info('Setting up JSON database readers!')
     global_.user_reader = reader.UserReader('./data/json/users.json')
     global_.user_reader.open()
-    global_.user_data_reader = reader.UserDataReader('./data/json/userdata.json')
-    global_.user_data_reader.open()
 
     logging.info('Server starting...')
     network_server.start('0.0.0.0', 50030)

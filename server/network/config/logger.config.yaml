@@ -7,10 +7,10 @@ formatters:
         secondary_log_colors:
             tag:
                 DEBUG: 'blue'
-                INFO: 'cyan'
-                WARN: 'yellow'
+                'INFO ': 'cyan'
+                'WARN ': 'yellow'
                 ERROR: 'red'
-                CRIT: 'red'
+                'CRIT ': 'red'
                 
     custom:
         format: '%(asctime)s | %(module)-20s | [%(levelname)s]   %(message)s'

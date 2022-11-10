@@ -68,12 +68,14 @@ def setup():
     with open('./config/logger.config.yaml', 'r') as f:
         config = yaml.safe_load(f.read())
         logging.config.dictConfig(config)
-    logging.addLevelName(logging.WARNING, 'WARN')
-    logging.addLevelName(logging.CRITICAL, 'CRIT')
+    logging.addLevelName(logging.INFO, 'INFO ')
+    logging.addLevelName(logging.WARNING, 'WARN ')
+    logging.addLevelName(logging.CRITICAL, 'CRIT ')
     logging.info('Starting client...')
 
 
 if __name__ == '__main__':
     colorama.init()
-
+    setup()
+    
     curses.wrapper(main)

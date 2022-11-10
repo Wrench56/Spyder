@@ -18,8 +18,9 @@ def main():
         config = yaml.safe_load(f.read())
         logging.config.dictConfig(config)
         f.close()
-    logging.addLevelName(logging.WARNING, 'WARN')
-    logging.addLevelName(logging.CRITICAL, 'CRIT')
+    logging.addLevelName(logging.INFO, 'INFO ')
+    logging.addLevelName(logging.WARNING, 'WARN ')
+    logging.addLevelName(logging.CRITICAL, 'CRIT ')
 
     signal.signal(signal.SIGTERM, terminate)
     signal.signal(signal.SIGINT, terminate)

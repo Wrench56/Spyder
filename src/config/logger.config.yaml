@@ -6,9 +6,9 @@ formatters:
         datefmt: '%Y-%m-%d %H:%M:%S'
         secondary_log_colors:
             tag:
-                WARN: 'yellow'
+                'WARN ': 'yellow'
                 ERROR: 'red'
-                CRIT: 'red'
+                'CRIT ': 'red'
     custom:
         format: '%(asctime)s | %(module)-20s | [%(levelname)s]   %(message)s'
         datefmt: '%Y-%m-%d %H:%M:%S'

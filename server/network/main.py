@@ -28,8 +28,11 @@ def main():
 
     network_server = server.Server()
 
-    print('\n          To exit the program press CTRL+Q!\n')
+    print('\n\n                  To exit the program press CTRL+Q!\n\n')
     keyboard.add_hotkey('ctrl+q', terminate)
+
+    print('        Time        |        Module        |  Level     Description')
+    print('                    |                      |                       ')
 
     logging.info('Setting up JSON database readers!')
     global_.user_reader = reader.UserReader('./data/json/users.json')

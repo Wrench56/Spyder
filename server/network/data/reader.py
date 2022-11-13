@@ -63,6 +63,19 @@ class UserReader(Reader):
     def update_token(self, username, token):
         return self.update_field(username, 'token', token, log_string='authentication token')
 
+    def get_user_field(self, username, field, log_string):
+        entry_index = None
+        
+        for i, user_entry in enumerate(self.buffer.get('users')):
+            if user_entry.get('username') == username:
+                entry_index = i
+
+        if entry_index is None:
+            logging.warning(f'User does not exits! Can\'t return {log_string}!')
+            return False
+
+        return self.buffer['users'][entry_index][field]
+
     def write(self):
         with open(self.path, 'w') as f:
             json.dump(self.buffer, f)

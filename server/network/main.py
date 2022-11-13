@@ -34,7 +34,7 @@ def main():
     print('        Time        |        Module        |  Level     Description')
     print('                    |                      |                       ')
 
-    logging.info('Setting up JSON database readers!')
+    logging.info('Setting up JSON database reader!')
     global_.user_reader = reader.UserReader('./data/json/users.json')
     global_.user_reader.open()
 

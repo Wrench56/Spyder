@@ -23,6 +23,7 @@ def handle(client_data):
 
     saved_hash = reader.get_user_hash(username)
 
+    message = 'F'
     if saved_hash is not False:
         if hash_ == saved_hash:
             logging.debug('Client provided valid credentials!')
@@ -30,7 +31,6 @@ def handle(client_data):
             client_data.is_authenticated = True
         else:
             logging.warn('Client provided wrong credentials!')
-            message = 'F'
             client_data.is_authenticated = False
 
     sender.send(client_data, message)

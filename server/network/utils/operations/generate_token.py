@@ -7,6 +7,11 @@ from utils.operations import sender
 def handle(client_data):
     json = client_data.new_json
 
+    if not client_data.is_server:
+        logging.warning('A non-server client tried to generate server authentication token!')
+        sender.send(client_data, 'F')
+        return
+
     username = json.get('u')
     if username is None:
         logging.warning('Group server tried to generate authentication token without providing username!')

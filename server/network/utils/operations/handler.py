@@ -19,14 +19,8 @@ def handle_operation(client_data) -> bool|None:
     elif op == 3: # Change password
         change_pw.handle(client_data)
     elif op == 4: # Generate tokens
-        if not client_data.is_server:
-            logging.warning('A non-server client tried to generate server authentication token!')
-            return
         generate_token.handle(client_data)
     elif op == 5: # Return auth token
-        if client_data.is_server:
-            logging.warning('Server tried to get its own authentication token, which is non-existent!')
-            return
         get_token.handle(client_data)
     elif op == 6: # Get mirror (in case of a link user)
         get_mirror.handle(client_data)        

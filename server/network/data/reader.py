@@ -76,6 +76,36 @@ class UserReader(Reader):
 
         return self.buffer['users'][entry_index][field]
 
+    def is_link(self, username):
+        is_link = 0
+        for user_entry in self.buffer.get('users'):
+            if user_entry.get('username') == username:
+                is_link = user_entry.get('link')        
+        
+        if is_link == 0:
+            logging.warning(f'User does not exits! Can\'t tell if user {username} is a link!')
+
+        if is_link is not True:
+            return False
+        return True
+
+    def get_mirror(self, username, number):
+        mirrors = []
+        for user_entry in self.buffer.get('users'):
+            if user_entry.get('username') == username:
+                mirrors = user_entry.get('mirrors')        
+        
+        if len(mirrors) == 0:
+            logging.warning(f'User does not exits or it has no mirrors! Can\'t return the mirrors of user {username}!')
+            return None
+        
+        try:
+            return mirrors[number]
+        except IndexError:
+            logging.warning(f'User {username} does not have a {number}. mirror!')
+            return None
+        
+
     def write(self):
         with open(self.path, 'w') as f:
             json.dump(self.buffer, f)

@@ -12,6 +12,10 @@ def handle(client_data):
         logging.warning('Group server tried to generate authentication token without providing username!')
         return
 
-    token_ = token.generate()
-    global_.user_reader.update_token(username, token_)
-    sender.send(client_data, token_)
+    if not global_.user_reader.is_link(username):
+        token_ = token.generate()
+        global_.user_reader.update_token(username, token_)
+        sender.send(client_data, token_)
+    else:
+        logging.warning('Group server tried to generate authentication token for a link user!')
+        sender.send(client_data, 'F')

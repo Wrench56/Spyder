@@ -8,7 +8,7 @@ def handle(client_data):
         sender.send(client_data, 'F')
         return
 
-    token = global_.user_reader.get_user_field(client_data.username, 'token', log_string='authentication token')
+    token = global_.user_reader.get_user_data(client_data.username)['token']
     if token is not None:
         sender.send(client_data, token)
     logging.debug('Authentication token sent successfully!')

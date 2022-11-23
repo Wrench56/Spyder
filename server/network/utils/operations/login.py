@@ -29,6 +29,10 @@ def handle(client_data):
             logging.debug('Client provided valid credentials!')
             message = 'S'
             client_data.is_authenticated = True
+            client_data_in_db = global_.user_reader.get_user_data(username)
+            client_data.is_link = client_data_in_db.get('link') if True else False
+            client_data.is_invite = client_data_in_db.get('invite') if True else False
+            client_data.is_user = (not client_data.is_link and not client_data.is_invite and not client_data.is_server) if True else False
         else:
             logging.warn('Client provided wrong credentials!')
             client_data.is_authenticated = False

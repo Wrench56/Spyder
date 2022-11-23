@@ -1,12 +1,12 @@
 import logging
-from utils.operations import login, change_pw, network_name, generate_token, get_token, get_mirror
+from utils.operations import login, change_pw, network_name, generate_token, get_token, get_mirror, create_user
 
 
 def handle_operation(client_data) -> bool|None: 
     json = client_data.new_json
     op = json.get('o')
     
-    if not client_data.is_authenticated and op != 1:
+    if not client_data.is_authenticated and (op != 1 and op != 7):
         logging.warning('Client wanted to perform an auth required task without authentication!')
         return
 
@@ -24,7 +24,8 @@ def handle_operation(client_data) -> bool|None:
         get_token.handle(client_data)
     elif op == 6: # Get mirror (in case of a link user)
         get_mirror.handle(client_data)        
-        
+    elif op == 7: # Create user
+        create_user.handle(client_data)                
     
 
 

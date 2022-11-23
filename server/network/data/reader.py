@@ -1,6 +1,8 @@
 import json
 import logging
 
+from utils import pw_create
+import global_
 #! This class should be changed relatively soon, as it is killing the memory
 
 class Reader():
@@ -27,18 +29,51 @@ class UserReader(Reader):
             logging.warning('Username not found in system! This might be an attack attempt!')   
         return False
 
-    def create_user(self, username: str, hash_):
+    def create_user(self, username: str, hash_, mirrors = None, invite = False):
         if self.get_user_hash(username, log=False) is not False:
             logging.warning('User already exists!')
             return False
 
-        self.buffer.get('users').append({
-            'username': username,
-            'hash': hash_
-        })
-        self.write()
+        if mirrors is None:
+            if invite:
+                user_entry = {
+                    'username': username,
+                    'hash': hash_,
+                    'invite': True,
+                    'token': ''
+                }
+            else:
+                user_entry = {
+                    'username': username,
+                    'hash': hash_,
+                    'token': ''
+                }
+        else:
+            user_entry = {
+                'username': username,
+                'link': True,
+                'token': '',
+                'mirrors': mirrors
+            }
 
+        self.buffer.get('users').append(user_entry)
+        self.write()
         return True
+    
+    def create_invite(self):
+        pw_config = global_.config['invite']['password']
+        pw = pw_create.create(pw_config['length'],
+                            pw_config['low_letters'],
+                            pw_config['cap_letters'],
+                            pw_config['numbers'],
+                            pw_config['symbols'])
+        
+        username = global_.config['invite']['temp_username'] + str(self.buffer['invite_num'])
+        self.create_user(username, pw, invite=True)
+        self.buffer['invite_num'] += 1
+        self.write() #! create_user already does a write, this is ineffective!
+
+        return username, pw
 
     def update_field(self, username, field, new_value, log_string):
         entry_index = None
@@ -63,7 +98,7 @@ class UserReader(Reader):
     def update_token(self, username, token):
         return self.update_field(username, 'token', token, log_string='authentication token')
 
-    def get_user_field(self, username, field, log_string):
+    def get_user_data(self, username):
         entry_index = None
         
         for i, user_entry in enumerate(self.buffer.get('users')):
@@ -71,10 +106,10 @@ class UserReader(Reader):
                 entry_index = i
 
         if entry_index is None:
-            logging.warning(f'User does not exits! Can\'t return {log_string}!')
+            logging.warning(f'User does not exits!')
             return False
 
-        return self.buffer['users'][entry_index][field]
+        return self.buffer['users'][entry_index]
 
     def is_link(self, username):
         is_link = 0

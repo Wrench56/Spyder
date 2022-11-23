@@ -5,3 +5,42 @@ network:
   name: 'SPYDER_MAIN'
 
 
+
+user:
+  create:
+    user: true
+    server: true
+    link: true
+    invite: true
+    unknown: true
+
+server:
+  create:
+    user: true
+    server: true
+    link: true
+    invite: true
+    unknown: true
+
+link:
+  create:
+    user: true
+    server: true
+    link: true
+    invite: true
+    unknown: false
+
+invite:
+  create: # Defines who can create an invite
+    user: true
+    server: false
+    link: false
+    invite: false
+    unknown: false
+  password: # Auto-assigned "invite password" config
+    length: 16
+    low_letters: true
+    cap_letters: true
+    numbers: true
+    symbols: true  
+  temp_username: 'unknown' # Auto-assigned "invite username"

@@ -91,7 +91,10 @@ class UserReader(Reader):
         logging.debug(f'Client changed {log_string} successfully!')
 
         return True
-        
+    
+    def update_username(self, username, new_username):
+        return self.update_field(username, 'username', new_username, log_string='username')
+
     def update_password(self, username, new_hash):
         return self.update_field(username, 'hash', new_hash, log_string='password hash')
 

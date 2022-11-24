@@ -1,5 +1,5 @@
 import logging
-from utils.operations import login, change_pw, network_name, generate_token, get_token, get_mirror, create_user
+from utils.operations import login, change_pw, network_name, generate_token, get_token, get_mirror, create_user, change_un
 
 
 def handle_operation(client_data) -> bool|None: 
@@ -16,15 +16,17 @@ def handle_operation(client_data) -> bool|None:
         login.handle(client_data)
     elif op == 2: # Network name
         network_name.handle(client_data)
-    elif op == 3: # Change password
+    elif op == 3: # Change username
+        change_un.handle(client_data)
+    elif op == 4: # Change password
         change_pw.handle(client_data)
-    elif op == 4: # Generate tokens
+    elif op == 5: # Generate tokens
         generate_token.handle(client_data)
-    elif op == 5: # Return auth token
+    elif op == 6: # Return auth token
         get_token.handle(client_data)
-    elif op == 6: # Get mirror (in case of a link user)
+    elif op == 7: # Get mirror (in case of a link user)
         get_mirror.handle(client_data)        
-    elif op == 7: # Create user
+    elif op == 8: # Create user
         create_user.handle(client_data)                
     
 

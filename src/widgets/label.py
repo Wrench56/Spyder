@@ -21,7 +21,7 @@ class Label(widget.Widget):
 
     def set_text(self, text):
         self.text = text
-        self.draw(self.last_x, self.last_y)
+        self.draw()
 
 
 class MultilineLabel(Label):

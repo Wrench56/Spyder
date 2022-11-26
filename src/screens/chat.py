@@ -2,14 +2,15 @@ from screens import screen
 from utils import terminal, keyboard
 from widgets import subwindow
 
+from events import on_resize
+
 import curses
 import math
 import time
 
 class Chat(screen.Screen):
-    def __init__(self, stdscr, struct) -> None:
+    def __init__(self, stdscr) -> None:
         super().__init__(stdscr)
-        self.struct = struct
 
         self.state = 3
 
@@ -23,10 +24,11 @@ class Chat(screen.Screen):
         self.setup()
 
         # Start the logic part
-        self.logic()
+        #self.logic()
 
     def setup(self):
         
+        on_resize.subscribe(self.resize)
         self.set_min(120, 25)
 
         self.contacts_win = subwindow.Subwindow(self.stdscr)
@@ -62,7 +64,7 @@ class Chat(screen.Screen):
                 y, x = self.stdscr.getmaxyx()
                 curses.resize_term(y, x)
                 if self.resize_check(x, y):
-                    self.resize(x, y)
+                    on_resize.trigger(x, y)
     
     def set_size(self):
         

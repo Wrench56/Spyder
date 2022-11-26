@@ -8,11 +8,11 @@ import logging
 import logging.config
 import yaml
 
-from screens import login, chat
-from client import client
+from screens import login
+import chat
 
 from utils import net, art, colors
-from data import login_structs
+from data.structs import login_structs
 
 VERSION = '0.1.0'
 
@@ -36,7 +36,8 @@ def main(stdscr):
     login_screen = login.Login(stdscr, login_data)
     del login_screen # Not necessarily needed
 
-    chat_screen = chat.Chat(stdscr, login_data)
+    chat.main(stdscr, login_data)
+    #chat_screen = chat.Chat(stdscr, login_data)
 
     curses.endwin()
 
@@ -77,5 +78,6 @@ def setup():
 if __name__ == '__main__':
     colorama.init()
     setup()
-    
+    #client_ = chat.Client()
+    #client_.start('127.0.0.1', 50030)
     curses.wrapper(main)

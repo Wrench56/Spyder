@@ -23,6 +23,9 @@ class Textbox(widget.Widget):
 
     def draw(self):
         x, y = super().getxy()
+        ly = self.lambda_y(y)
+        lx = self.lambda_x(x)
+        self.move_cursor(lx, ly)
 
         self.empty()
         for i, line in enumerate(self.buffer):
@@ -31,9 +34,6 @@ class Textbox(widget.Widget):
             self.pad.addstr(i, 0, line)
 
         sy, sx = self.stdscr.getbegyx()
-        ly = self.lambda_y(y)
-        lx = self.lambda_x(x)
-        self.move_cursor(lx, ly)
         self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))
 
     def input(self, ch):

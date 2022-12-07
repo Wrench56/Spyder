@@ -1,2 +1,5 @@
 # Server log files
 logs
+
+# Server "database"
+data/json

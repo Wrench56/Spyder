@@ -1,2 +1,5 @@
 # Ignore system logs
 logs
+
+# Ignore user configs & data
+data/users

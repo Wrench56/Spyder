@@ -1,4 +1,4 @@
-from screens import screen
+from screens import screen, new_user
 from widgets import textbox, label, subwindow
 from utils import art, colors, keyboard, terminal
 
@@ -46,10 +46,10 @@ class Login(screen.Screen):
         self.logo_label.set_size(lambda x: math.floor((x-65)/2)+25, lambda y: math.floor((y-8)/2)-2, None, None)
         self.motto_label = label.Label(self.stdscr, art.MOTTO, color=curses.color_pair(colors.RED_ON_BLACK))
         self.motto_label.set_size(lambda x: math.floor((x-65)/2)+47, lambda y: math.floor((y-8)/2)+6, None, None)
+        self.create_label = label.Label(self.stdscr, 'Or PRESS CTRL+N to create a new local user!')
+        self.create_label.set_size(lambda x: math.floor((x-34)/2), lambda y: math.floor((y-8)/2)+10, None, None)
 
-        y, x = self.stdscr.getmaxyx()
-        if self.resize_check(x, y):
-            self.resize(x, y)
+        self.resize()
     
     def logic(self):
         self.username_textbox.update_cursor()
@@ -60,20 +60,11 @@ class Login(screen.Screen):
             if ch == curses.KEY_HOME:
                 break
             elif ch == curses.KEY_RESIZE:
-                y, x = self.stdscr.getmaxyx()
-                if self.resize_check(x, y):
-                    self.resize(x, y)
-                if box_index == 0:
-                    self.username_textbox.update_cursor()
-                else:
-                    self.password_textbox.update_cursor()
+                self.resize()
+                self.focus_cursor(box_index)
             elif ch == keyboard.KEY_TAB:
-                if box_index == 0:
-                    box_index = 1
-                    self.password_textbox.update_cursor()
-                else:
-                    box_index = 0
-                    self.username_textbox.update_cursor()
+                box_index = (1, 0)[box_index]
+                self.focus_cursor(box_index)
             elif ch == keyboard.KEY_ENTER:
                 username = self.username_textbox.get_text()
                 password = self.password_textbox.get_text()
@@ -86,14 +77,32 @@ class Login(screen.Screen):
 
                 # Exit the screen
                 return
+            elif ch == 14: # CTRL + N, create new user
+                new_user.NewUser(self.stdscr)
+                # After NewUser() is done:
+
+                self.resize()
+                self.username_textbox.draw()
+                self.password_textbox.draw()
+                self.focus_cursor(box_index)
 
             else:
                 if box_index == 0:
                     self.username_textbox.input(ch)
                 else:
                     self.password_textbox.input(ch)
+    def focus_cursor(self, box_index):
+        if box_index == 0:
+            self.username_textbox.update_cursor()
+        else:
+            self.password_textbox.update_cursor()
+            
 
-    def resize(self, x, y):
+    def resize(self):
+        y, x = self.stdscr.getmaxyx()
+        if not self.resize_check(x, y):
+            return
+
         self.stdscr.erase()
 
         self.username_win.resize(x, y)
@@ -106,5 +115,6 @@ class Login(screen.Screen):
 
         self.logo_label.resize(x, y)
         self.motto_label.resize(x, y)
+        self.create_label.resize(x, y)
 
         self.stdscr.refresh()        

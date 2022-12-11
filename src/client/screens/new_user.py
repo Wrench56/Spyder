@@ -3,9 +3,7 @@ from widgets import textbox, label, subwindow
 from utils import art, colors, keyboard, terminal, create_user
 from data.structs.new_user_struct import NewUserData
 
-from termcolor import colored
 import curses
-import math
 
 class NewUser(screen.Screen):
     def __init__(self, stdscr) -> None:

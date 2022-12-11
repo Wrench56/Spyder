@@ -81,8 +81,14 @@ class NewUser(screen.Screen):
                     self.focus -= 1
                 self.refresh_focus(self.focus)
             elif ch == curses.KEY_DOWN:
-                if self.focus < 100: #! Change this number
+                if self.focus < 2:
                     self.focus += 1
+                self.refresh_focus(self.focus)
+            elif ch == keyboard.KEY_TAB:
+                if self.focus < 2:
+                    self.focus += 1
+                else:
+                    self.focus = 0
                 self.refresh_focus(self.focus)
             elif ch == keyboard.KEY_ENTER:
                 self.create_user()

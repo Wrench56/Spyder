@@ -1,5 +1,4 @@
 import colorama
-from termcolor import colored
 import datetime
 import os
 import platform
@@ -22,7 +21,10 @@ def main(stdscr):
     # Create color pairs
 
     print(art.HEADER)
-    print(colored(' '*20+art.MOTTO, 'red'))
+    if os.getenv('ANSI_COLORS_DISABLED') is None:
+        print(f'\033[31m{(" "*20+art.MOTTO)}\033[0m')
+    else:
+        print(" "*20+art.MOTTO)
     print('='*40)
 
     infobox()

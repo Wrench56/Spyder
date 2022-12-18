@@ -8,20 +8,14 @@ import math
 
 class InputContainer(bc.BaseContainer):
     def __init__(self, stdscr):
-        self.stdscr = stdscr
-
-        self.setup()
+        super().__init__(stdscr)
 
     def setup(self):
         self.win = subwindow.Subwindow(self.stdscr)
         self.win.set_size(lambda x: math.floor((x/8)*2)+2, lambda y: y-4, lambda w: math.floor((w/8)*6)-2, lambda h: 3)
 
+        self.title_label = label.Label(self.win.get(), '')
+        self.title_label.set_size(lambda x: 3, lambda y: 0, None, None)
+        
     def handle_input(self, key):
         pass
-    
-    def rename(self, new_name: str):
-        self.title_label.set_text(new_name)
-        self.title_label.draw()
-    
-    def resize(self, x, y):
-        self.win.resize(x, y)

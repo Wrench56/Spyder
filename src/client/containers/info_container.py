@@ -8,9 +8,7 @@ import math
 
 class InfoContainer(bc.BaseContainer):
     def __init__(self, stdscr):
-        self.stdscr = stdscr
-
-        self.setup()
+        super().__init__(stdscr)
 
     def setup(self):
         self.win = subwindow.Subwindow(self.stdscr)
@@ -21,11 +19,3 @@ class InfoContainer(bc.BaseContainer):
 
     def handle_input(self, key):
         pass
-    
-    def rename(self, new_name: str):
-        self.title_label.set_text(new_name)
-        self.title_label.draw()
-    
-    def resize(self, x, y):
-        self.win.resize(x, y)
-        self.title_label.resize(x, y)

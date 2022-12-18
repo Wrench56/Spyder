@@ -63,7 +63,7 @@ class Chat(screen.Screen):
         if self.state >= 2:
             self.chat_container.set_size(lambda x: math.floor((x/8)*2)+2, lambda y: 1, lambda w: math.floor((w/8)*4)-2, lambda h: h-5)
             self.input_container.set_size(lambda x: math.floor((x/8)*2)+2, lambda y: y-4, lambda w: math.floor((w/8)*4)-2, lambda h: 3)
-            self.special_container.set_size(lambda x: math.floor((x/8)*6), lambda y: 1, lambda w: math.floor((w/8)*2), lambda h: h-2)
+            self.special_container.set_size(lambda x: (math.floor((x/8)*2)+2+math.floor((x/8)*4)-2), lambda y: 1, lambda w: math.ceil((w/8)*2)-1, lambda h: h-2)
 
         if self.state == 1 or self.state == 3:
             self.channel_container.set_size(lambda x: 1, lambda y: 1, lambda w: math.floor((w/8)*2)+1, lambda h: math.floor((h/3)*2))
@@ -75,8 +75,7 @@ class Chat(screen.Screen):
             on_resize.trigger(x, y)
 
     def resize(self, x, y):
-        curses.endwin()
-        time.sleep(0.1)
+        time.sleep(0.01)
         self.stdscr.erase()
 
         self.channel_container.resize(x, y)

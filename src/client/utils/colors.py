@@ -63,3 +63,11 @@ def parse_ansi_string(string):
             del string_color[0:2]
 
         return tuple(string_color)
+
+def colored_addstr(stdscr, x, y, string):
+    string_color = parse_ansi_string(string)
+    for i in range(len(string_color), step=2):
+        if string_color[i+1] == None:
+            stdscr.addstr(y, x, string_color[i+1])
+        else:
+            stdscr.addstr(y, x, string_color[i+1], string_color[i+1])

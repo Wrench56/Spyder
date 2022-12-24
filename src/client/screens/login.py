@@ -44,7 +44,7 @@ class Login(screen.Screen):
 
         self.logo_label = label.MultilineLabel(self.stdscr, art.HEADER)
         self.logo_label.set_size(lambda x: math.floor((x-65)/2)+25, lambda y: math.floor((y-8)/2)-2, None, None)
-        self.motto_label = label.Label(self.stdscr, art.MOTTO, color=curses.color_pair(colors.RED_ON_BLACK))
+        self.motto_label = label.Label(self.stdscr, f'\x1b[31m{art.MOTTO}')
         self.motto_label.set_size(lambda x: math.floor((x-65)/2)+47, lambda y: math.floor((y-8)/2)+6, None, None)
         self.create_label = label.Label(self.stdscr, 'Or PRESS CTRL+N to create a new local user!')
         self.create_label.set_size(lambda x: math.floor((x-34)/2), lambda y: math.floor((y-8)/2)+10, None, None)

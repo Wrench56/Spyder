@@ -30,7 +30,9 @@ def main(stdscr):
     infobox()
     update()
     
+    # Curses configuration
     curses.noecho()
+    curses.mousemask(-1)
 
     colors.init()
 

@@ -65,10 +65,11 @@ class ListView(widget.Widget):
                             self.draw()
                     except IndexError:
                         pass
+    
+    def add_node(self, name, path: str = '', subnodes: list = []):
+        listview_utils.add_node(self.buffer, name, path, subnodes)
 
+    
     def set_buffer(self, buff):
         self.buffer = buff
         self.draw()
-
-    def get_text(self):
-        return '\n'.join(self.buffer)

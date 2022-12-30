@@ -1,4 +1,4 @@
-from utils import colors
+#from utils import colors
 
 def validate_tree(list_) -> bool:
     for i, element in enumerate(list_):
@@ -78,3 +78,30 @@ def toggle_expand(buffer: list, find_index: int, curr_index: int = 0):
         elif find_index+1 < curr_index:
             return False
     return curr_index
+
+def get_list(buffer, path):
+    c_path = path[0]
+    for i, element in enumerate(buffer):
+        if c_path == element:
+            if path[-1] == c_path:
+                return buffer[i+1]
+            return get_list(buffer[i+1], path[1:])
+    return False   
+
+
+def add_node(buffer: list, name: str, path: str, subnodes: list):
+    #! Only usable with positive and non-null index numbers!
+    if path == '':
+        buffer.append(name)
+        if len(subnodes) > 0:
+            buffer.append(subnodes)
+        return True
+
+    sublist = get_list(buffer, path.split('\\'))
+    if sublist is False:
+        return False
+
+    sublist.append(name)
+    if len(subnodes) > 0:
+        sublist.append(subnodes)
+    return True

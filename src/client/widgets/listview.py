@@ -54,7 +54,7 @@ class ListView(widget.Widget):
             mouse_event = curses.getmouse()
             if self.lambda_x(x) <= mouse_event[1] and self.lambda_x(x)+self.lambda_w(x) >= mouse_event[1]:
                 if self.lambda_y(y) <= mouse_event[2] and self.lambda_y(y)+self.lambda_h(y) >= mouse_event[2]:
-                    self.handle_mouse_input(mouse_event, x, y)
+                    return self.handle_mouse_input(mouse_event, x, y)
 
     def selected_item(self):
         return self.buffer[self.cursor]

@@ -1,6 +1,6 @@
 from screens import screen
 from utils import terminal, keyboard
-from widgets import subwindow, listview, label, textbox
+from widgets import subwindow, listview_e, label, textbox
 
 from events import on_resize
 
@@ -31,7 +31,7 @@ class Chat(screen.Screen):
         self.set_min(120, 25)
 
         self.channel_win = subwindow.Subwindow(self.stdscr, True)
-        self.channel_lv = listview.ListView(self.channel_win.get(), width=200, height=10000)
+        self.channel_lv = listview_e.ListViewE(self.channel_win.get(), width=200, height=10000)
         self.chat_win = subwindow.Subwindow(self.stdscr, True)
         self.info_win = subwindow.Subwindow(self.stdscr, True)
         self.input_win = subwindow.Subwindow(self.stdscr, True)

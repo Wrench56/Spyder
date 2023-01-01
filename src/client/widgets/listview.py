@@ -1,4 +1,4 @@
-from widgets import listview_node, widget
+from widgets import widget
 from utils import keyboard, colors
 
 import curses
@@ -8,7 +8,7 @@ class ListView(widget.Widget):
     def __init__(self, stdscr, width=20, height=100):
         super().__init__(stdscr)
 
-        self.buffer = ['Hello', 'World']
+        self.buffer = []
 
         self.pad_pos_x = 0
         self.pad_pos_y = 0
@@ -62,7 +62,7 @@ class ListView(widget.Widget):
     def handle_mouse_input(self, mouse_event, x, y):
         if mouse_event[4] == curses.BUTTON1_CLICKED:
             try:
-                return self.buffer[self.pad_pos_y+mouse_event[2]-self.lambda_x(x)-1]
+                return self.buffer[self.pad_pos_y+mouse_event[2]-self.lambda_y(y)-1]
             except IndexError:
                 pass
 

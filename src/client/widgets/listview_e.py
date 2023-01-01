@@ -7,7 +7,7 @@ import curses
 class ListViewE(ListView):
     def __init__(self, stdscr, width=20, height=100):
         super().__init__(stdscr, width, height)
-        self.buffer = [Node('Hello', [Node('A', [Node('1'), Node('2')], False), Node('B', [Node('1'), Node('2')])])]
+        self.buffer = []
 
     def draw_items(self):
         line = 0
@@ -18,7 +18,7 @@ class ListViewE(ListView):
         if mouse_event[4] == curses.BUTTON1_CLICKED:
             result = 0
             for node in self.buffer:
-                result = node.get_by_index(self.pad_pos_y+mouse_event[2]-self.lambda_x(x), result)
+                result = node.get_by_index(self.pad_pos_y+mouse_event[2]-self.lambda_y(y), result)
                 if isinstance(result, str):
                     return result
                 if isinstance(result, bool):

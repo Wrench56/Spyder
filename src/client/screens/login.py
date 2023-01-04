@@ -1,12 +1,14 @@
 from screens import screen, new_user
 from widgets import textbox, label, subwindow
-from utils import art, colors, keyboard, terminal
+from utils import art, keyboard, terminal
 
 import curses
 import math
+import logging
+
 
 class Login(screen.Screen):
-    def __init__(self, stdscr, struct) -> None:
+    def __init__(self, stdscr: curses.window, struct: object) -> None:
         super().__init__(stdscr)
         self.struct = struct
 
@@ -41,7 +43,6 @@ class Login(screen.Screen):
         self.password_textbox = textbox.Textbox(self.password_win.get(), width=19, height=1, show_chars='*')
         self.password_textbox.set_size(lambda x: 1, lambda y: 1, lambda w: 17, lambda h: 0)
 
-
         self.logo_label = label.MultilineLabel(self.stdscr, art.HEADER)
         self.logo_label.set_size(lambda x: math.floor((x-65)/2)+25, lambda y: math.floor((y-8)/2)-2, None, None)
         self.motto_label = label.Label(self.stdscr, f'\x1b[31m{art.MOTTO}')
@@ -50,13 +51,13 @@ class Login(screen.Screen):
         self.create_label.set_size(lambda x: math.floor((x-34)/2), lambda y: math.floor((y-8)/2)+10, None, None)
 
         self.resize()
-    
+
     def logic(self):
         self.username_textbox.update_cursor()
 
-        box_index = 0
+        box_index: int = 0
         while True:
-            ch = self.stdscr.getch()
+            ch: int = self.stdscr.getch()
             if ch == curses.KEY_HOME:
                 break
             elif ch == curses.KEY_RESIZE:
@@ -66,18 +67,19 @@ class Login(screen.Screen):
                 box_index = (1, 0)[box_index]
                 self.focus_cursor(box_index)
             elif ch == keyboard.KEY_ENTER:
-                username = self.username_textbox.get_text()
-                password = self.password_textbox.get_text()
+                username: str = self.username_textbox.get_text()
+                password: str = self.password_textbox.get_text()
                 if username == '' or password == '':
-                    print('We have a problem!')
-                    continue
-                    
+                    logging.critical('No username and/or password provided!')
+                    curses.endwin()
+                    quit()
+
                 self.struct.username = username
                 self.struct.password = password
 
-                # Exit the screen
+                # Exit this screen
                 return
-            elif ch == 14: # CTRL + N, create new user
+            elif ch == 14:  # CTRL + N, create new user
                 new_user.NewUser(self.stdscr)
                 # After NewUser() is done:
 
@@ -91,12 +93,12 @@ class Login(screen.Screen):
                     self.username_textbox.input(ch)
                 else:
                     self.password_textbox.input(ch)
+
     def focus_cursor(self, box_index):
         if box_index == 0:
             self.username_textbox.update_cursor()
         else:
             self.password_textbox.update_cursor()
-            
 
     def resize(self):
         y, x = self.stdscr.getmaxyx()
@@ -104,6 +106,7 @@ class Login(screen.Screen):
             return
 
         self.stdscr.erase()
+        self.stdscr.refresh()
 
         self.username_win.resize(x, y)
         self.username_label.resize(x, y)
@@ -116,5 +119,3 @@ class Login(screen.Screen):
         self.logo_label.resize(x, y)
         self.motto_label.resize(x, y)
         self.create_label.resize(x, y)
-
-        self.stdscr.refresh()        

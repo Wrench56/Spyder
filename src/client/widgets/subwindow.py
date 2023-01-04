@@ -2,25 +2,24 @@ from widgets import widget
 
 import curses
 
+
 class Subwindow(widget.Widget):
-    def __init__(self, stdscr, border=True):
-        self.border = border
-        self.window = stdscr.subwin(0, 0)
+    def __init__(self, stdscr: curses.window, border: bool = True):
+        self.border: bool = border
+        self.window: curses.window = stdscr.subwin(0, 0)
         super().__init__(stdscr)
 
     def draw(self):
         x, y = super().getxy()
 
-        self.window.refresh() #? Is this needed?
-
         # I have no idea why the previous version failed, but this is working pretty well!
-        try: #! Do NOT delete this: this saves you from a lot of curses error
-            self.window.resize(1, 1) 
+        try:  # ! Do NOT delete this: this saves you from a lot of curses error
+            self.window.resize(1, 1)
             self.window.mvwin(0, 0)
         except curses.error:
             self.window.mvwin(0, 0)
             self.window.resize(1, 1)
-        
+
         self.window.mvwin(self.lambda_y(y), self.lambda_x(x))
         self.window.resize(self.lambda_h(y), self.lambda_w(x))
         if self.border:
@@ -29,4 +28,3 @@ class Subwindow(widget.Widget):
 
     def get(self):
         return self.window
-

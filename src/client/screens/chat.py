@@ -1,12 +1,12 @@
 from screens import screen
 from utils import terminal, keyboard
-from widgets import subwindow, listview_e, label, textbox
+from widgets import subwindow, listview_e
 
 from events import on_resize
 
 import curses
 import math
-import time
+
 
 class Chat(screen.Screen):
     def __init__(self, stdscr) -> None:
@@ -37,7 +37,6 @@ class Chat(screen.Screen):
         self.input_win = subwindow.Subwindow(self.stdscr, True)
         self.special_win = subwindow.Subwindow(self.stdscr, True)
 
-
         self.set_size()
 
     def logic(self):
@@ -56,9 +55,9 @@ class Chat(screen.Screen):
                     on_resize.trigger(x, y)
             else:
                 print(self.channel_lv.input(ch))
-    
+
     def set_size(self):
-        
+
         self.channel_win.set_size(lambda x: 1, lambda y: 1, lambda w: math.floor((w/8)*2)+1, lambda h: h-2)
         self.channel_lv.set_size(lambda x: 1, lambda y: 1, lambda w: math.floor((w/8)*2)-2, lambda h: h-5)
         self.chat_win.set_size(lambda x: math.floor((x/8)*2)+2, lambda y: 1, lambda w: math.floor((w/8)*6)-2, lambda h: h-5)
@@ -73,8 +72,6 @@ class Chat(screen.Screen):
             self.channel_win.set_size(lambda x: 1, lambda y: 1, lambda w: math.floor((w/8)*2)+1, lambda h: math.floor((h/3)*2))
             self.channel_lv.set_size(lambda x: 1, lambda y: 1, lambda w: math.floor((w/8)*2)-2, lambda h: math.floor((h/3)*2)-3)
             self.info_win.set_size(lambda x: 1, lambda y: math.floor((y/3)*2)+1, lambda w: math.floor((w/8)*2)+1, lambda h: math.ceil(h/3)-2)
-            
-        
 
         y, x = self.stdscr.getmaxyx()
         curses.resize_term(y, x)
@@ -82,9 +79,9 @@ class Chat(screen.Screen):
             on_resize.trigger(x, y)
 
     def resize(self, x, y):
-        time.sleep(0.01)
         self.stdscr.erase()
-        
+        self.stdscr.refresh()
+
         self.channel_win.resize(x, y)
         self.chat_win.resize(x, y)
         self.input_win.resize(x, y)
@@ -92,8 +89,5 @@ class Chat(screen.Screen):
             self.special_win.resize(x, y)
         if self.state == 1 or self.state == 3:
             self.info_win.resize(x, y)
-        self.stdscr.refresh()
 
         self.channel_lv.resize(x, y)
-
-        self.stdscr.refresh()

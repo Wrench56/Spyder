@@ -1,9 +1,10 @@
-from widgets import widget, label
-from utils import keyboard
+from widgets import widget
+from utils import keyboard, cursor
 import curses
 
+
 class Textbox(widget.Widget):
-    def __init__(self, stdscr, width = 20, height = 100, show_chars = False):
+    def __init__(self, stdscr, width: int = 20, height: int = 100, show_chars: bool | str = False):
         super().__init__(stdscr)
 
         self.buffer = ['']
@@ -30,24 +31,24 @@ class Textbox(widget.Widget):
         self.empty()
         for i, line in enumerate(self.buffer):
             if self.show_chars:
-                line = len(line)*self.show_chars
+                line = len(line) * self.show_chars
             self.pad.addstr(i, 0, line)
 
         sy, sx = self.stdscr.getbegyx()
-        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))
+        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # noqa: E226
 
     def input(self, ch):
         x, y = super().getxy()
 
         if ch == keyboard.KEY_BACKSPACE:
             if self.cur_x > 0:
-                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x-1] + self.buffer[self.cur_y][(self.cur_x):]
+                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x - 1] + self.buffer[self.cur_y][(self.cur_x):]
                 self.cur_x -= 1
         elif ch == keyboard.KEY_DELETE:
             if self.cur_x < self.lambda_w(x):
-                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x] + self.buffer[self.cur_y][(self.cur_x+1):]
+                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x] + self.buffer[self.cur_y][(self.cur_x + 1):]
         elif ch == keyboard.KEY_ENTER:
-            if self.pad_pos_y+1 < self.height:
+            if self.pad_pos_y + 1 < self.height:
                 self.cur_y += 1
                 self.cur_x = 0
                 self.buffer.append('')
@@ -70,17 +71,17 @@ class Textbox(widget.Widget):
             if self.cur_x < self.lambda_w(x):
                 self.cur_x += 1
                 self.buffer[self.cur_y] += chr(ch)
-            
+
         self.draw()
 
         lx, ly = self.lambda_x(x), self.lambda_y(y)
         self.move_cursor(lx, ly)
 
     def move_cursor(self, lx, ly):
-        self.stdscr.cursyncup()
-        self.stdscr.move(ly+self.cur_y, lx+self.cur_x)
+        sy, sx = self.stdscr.getbegyx()
+        cursor.move(sx + lx + self.cur_x, sy + ly + self.cur_y)
 
-    def update_cursor(self): #? Most likely not needed
+    def update_cursor(self):
         x, y = super().getxy()
         lx, ly = self.lambda_x(x), self.lambda_y(y)
 
@@ -88,7 +89,7 @@ class Textbox(widget.Widget):
 
     def empty(self):
         for y, line in enumerate(self.buffer):
-            self.pad.addstr(y, 0, ' '*(len(line)+1)) # +1 because of the backspace operation...
-    
+            self.pad.addstr(y, 0, ' ' * (len(line) + 1))  # +1 because of the backspace operation...
+
     def get_text(self):
         return '\n'.join(self.buffer)

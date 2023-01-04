@@ -1,9 +1,10 @@
 from screens import screen
 from widgets import textbox, label, subwindow
-from utils import art, colors, keyboard, terminal, create_user
+from utils import colors, keyboard, terminal, create_user
 from data.structs.new_user_struct import NewUserData
 
 import curses
+
 
 class NewUser(screen.Screen):
     def __init__(self, stdscr) -> None:
@@ -27,7 +28,7 @@ class NewUser(screen.Screen):
 
         # Start the logic part
         self.logic()
-    
+
     def setup(self):
         self.set_min(68, 15)
 
@@ -96,18 +97,18 @@ class NewUser(screen.Screen):
     def color_status_text(self):
         for i, value in enumerate(self.status.values()):
             if value == 'UNKW':
-                self.status_win.get().addstr(1+i, 5, 'UNKW', curses.color_pair(colors.YELLOW_ON_BLACK))
+                self.status_win.get().addstr(1 + i, 5, 'UNKW', curses.color_pair(colors.YELLOW_ON_BLACK))
             elif value == 'FAIL':
-                self.status_win.get().addstr(1+i, 5, 'FAIL', curses.color_pair(colors.RED_ON_BLACK))
+                self.status_win.get().addstr(1 + i, 5, 'FAIL', curses.color_pair(colors.RED_ON_BLACK))
             else:
-                self.status_win.get().addstr(1+i, 5, ' OK ', curses.color_pair(colors.GREEN_ON_BLACK))
+                self.status_win.get().addstr(1 + i, 5, ' OK ', curses.color_pair(colors.GREEN_ON_BLACK))
         self.refresh_focus(self.focus)
 
     def format_status(self):
         formatted_text = ''
         for category in self.status.keys():
             formatted_text += f' > [{self.status[category]}] {category}\n'
-        
+
         return formatted_text
 
     def input_focused(self, focus, input_):
@@ -117,7 +118,7 @@ class NewUser(screen.Screen):
             self.password_textbox.input(input_)
         elif focus == 2:
             self.password_conf_textbox.input(input_)
-            
+
     def refresh_focus(self, focus):
         if focus == 0:
             self.username_textbox.update_cursor()
@@ -152,7 +153,7 @@ class NewUser(screen.Screen):
             self.set_new_status('Passwords match', 'FAIL')
             cleanup()
             return
-        
+
         create_user.run_all(self.set_new_status, struct)
         cleanup()
 
@@ -169,6 +170,7 @@ class NewUser(screen.Screen):
             return
 
         self.stdscr.erase()
+        self.stdscr.refresh()
 
         self.username_win.resize(x, y)
         self.username_label.resize(x, y)
@@ -189,5 +191,3 @@ class NewUser(screen.Screen):
         self.status_label.resize(x, y)
 
         self.help_label.resize(x, y)
-
-        self.stdscr.refresh()

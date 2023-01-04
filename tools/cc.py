@@ -11,21 +11,15 @@
 #  to be still in __pycache__.
 #  3. The same applies when you rename/
 #  relocate a source file.
-#  4. Optimize .pyc files: when the 
-#  script re-compiles all the python
-#  files, it uses '-o 2' which sets
-#  the __debug__ flag to False,
-#  removes the assert statements AND
-#  removes ALL docstring!
 
-# Ultimately this script/tool frees up some
-# hard drive space and occasionally speeds up
-# Python's "boot up" time.
+
+# Ultimately this script/tool occasionally
+# frees up some hard drive space.
 
 import os
-import compileall
 
 BLACKLIST = ['.git', '.github']
+
 
 def remove_files(path):
     with os.scandir(path) as rdir:
@@ -40,13 +34,14 @@ def remove_files(path):
                 if entry.name.endswith('.pyc'):
                     os.remove(entry.path)
 
+
 def main():
     path = os.getcwd()
 
     remove_files(path)
-    compileall.compile_dir(path, force=True, optimize=2)
 
     print('\n > Done!')
+
 
 if __name__ == '__main__':
     main()

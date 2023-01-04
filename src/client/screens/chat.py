@@ -1,3 +1,5 @@
+# flake8: noqa: E226
+
 from screens import screen
 from utils import terminal, keyboard
 from widgets import subwindow, listview_e
@@ -82,12 +84,17 @@ class Chat(screen.Screen):
         self.stdscr.erase()
         self.stdscr.refresh()
 
+        self.channel_win.get().erase()
         self.channel_win.resize(x, y)
+        self.chat_win.get().erase()
         self.chat_win.resize(x, y)
+        self.input_win.get().erase()
         self.input_win.resize(x, y)
         if self.state >= 2:
+            self.special_win.get().erase()
             self.special_win.resize(x, y)
         if self.state == 1 or self.state == 3:
+            self.info_win.get().erase()
             self.info_win.resize(x, y)
-
+            
         self.channel_lv.resize(x, y)

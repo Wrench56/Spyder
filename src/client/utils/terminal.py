@@ -1,5 +1,6 @@
 import sys
 
+
 def rename_terminal(title):
     # Renames the terminal
     # Note: This renames the whole terminal window, not just the tab!

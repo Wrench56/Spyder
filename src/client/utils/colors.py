@@ -27,7 +27,7 @@ ANSI_COLORS = {
 def init():
     curses.start_color()
 
-    curses.init_pair(BLACK_ON_BLACK, curses.COLOR_BLACK, curses.COLOR_BLACK) # Am I going to use this anytime?
+    curses.init_pair(BLACK_ON_BLACK, curses.COLOR_BLACK, curses.COLOR_BLACK)  # Am I going to use this anytime?
     curses.init_pair(RED_ON_BLACK, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(GREEN_ON_BLACK, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(YELLOW_ON_BLACK, curses.COLOR_YELLOW, curses.COLOR_BLACK)
@@ -38,32 +38,34 @@ def init():
 
     curses.init_pair(BLACK_ON_WHITE, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
+
 def parse_ansi_string(string):
-        string_color = []
-        iter_string = iter(string)
-        text = ''
-        color = None
-        char_number = 0
-        for char in iter_string:
-            if char == '\x1b':
-                string_color.append(text)
-                string_color.append(color)
-                text = ''
-                ansi_esc = string[char_number+1:char_number+4]
-                if ansi_esc[-2] != '0':
-                    ansi_esc = ansi_esc + string[char_number+4]
-                color = ANSI_COLORS[ansi_esc]
+    string_color = []
+    iter_string = iter(string)
+    text = ''
+    color = None
+    char_number = 0
+    for char in iter_string:
+        if char == '\x1b':
+            string_color.append(text)
+            string_color.append(color)
+            text = ''
+            ansi_esc = string[char_number + 1:char_number + 4]
+            if ansi_esc[-2] != '0':
+                ansi_esc = ansi_esc + string[char_number + 4]
+            color = ANSI_COLORS[ansi_esc]
 
-                for _ in range(len(ansi_esc)):
-                    next(iter_string)
-                char_number += len(ansi_esc)+1
-                continue
+            for _ in range(len(ansi_esc)):
+                next(iter_string)
+            char_number += len(ansi_esc) + 1
+            continue
 
-            text += char
-            char_number += 1
-        string_color.append(text)
-        string_color.append(color)
-        return tuple(string_color)
+        text += char
+        char_number += 1
+    string_color.append(text)
+    string_color.append(color)
+    return tuple(string_color)
+
 
 def colored_addstr(stdscr, x, y, string):
     string_color = parse_ansi_string(string)
@@ -72,8 +74,8 @@ def colored_addstr(stdscr, x, y, string):
         string = string_color[i]
         if string == '':
             continue
-        if string_color[i+1] == None:
-            stdscr.addstr(y, x_shift+x, string)
+        if string_color[i + 1] is None:
+            stdscr.addstr(y, x_shift + x, string)
         else:
-            stdscr.addstr(y, x_shift+x, string, curses.color_pair(string_color[i+1]))
+            stdscr.addstr(y, x_shift + x, string, curses.color_pair(string_color[i + 1]))
         x_shift += len(string)

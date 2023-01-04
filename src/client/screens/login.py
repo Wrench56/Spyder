@@ -1,3 +1,5 @@
+# flake8: noqa: E226
+
 from screens import screen, new_user
 from widgets import textbox, label, subwindow
 from utils import art, keyboard, terminal

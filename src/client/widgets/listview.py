@@ -5,7 +5,7 @@ import curses
 
 
 class ListView(widget.Widget):
-    def __init__(self, stdscr, width=20, height=100):
+    def __init__(self, stdscr: curses.window, width: int = 20, height: int = 100):
         super().__init__(stdscr)
 
         self.buffer = []
@@ -30,13 +30,13 @@ class ListView(widget.Widget):
         self.draw_items()
 
         sy, sx = self.stdscr.getbegyx()
-        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))
+        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # noqa: E226
 
     def draw_items(self):
         for i, item in enumerate(self.buffer):
             colors.colored_addstr(self.pad, 0, i, item)
 
-    def input(self, key) -> None|str:
+    def input(self, key: int) -> None | str:
         if key == curses.KEY_DOWN:
             if self.cursor >= self.height:
                 return
@@ -52,23 +52,23 @@ class ListView(widget.Widget):
         elif key == curses.KEY_MOUSE:
             x, y = self.getxy()
             mouse_event = curses.getmouse()
-            if self.lambda_x(x) <= mouse_event[1] and self.lambda_x(x)+self.lambda_w(x) >= mouse_event[1]:
-                if self.lambda_y(y) <= mouse_event[2] and self.lambda_y(y)+self.lambda_h(y) >= mouse_event[2]:
+            if self.lambda_x(x) <= mouse_event[1] and self.lambda_x(x) + self.lambda_w(x) >= mouse_event[1]:
+                if self.lambda_y(y) <= mouse_event[2] and self.lambda_y(y) + self.lambda_h(y) >= mouse_event[2]:
                     return self.handle_mouse_input(mouse_event, x, y)
 
     def selected_item(self):
         return self.buffer[self.cursor]
-    
-    def handle_mouse_input(self, mouse_event, x, y):
+
+    def handle_mouse_input(self, mouse_event: tuple, x: int, y: int):
         if mouse_event[4] == curses.BUTTON1_CLICKED:
             try:
-                return self.buffer[self.pad_pos_y+mouse_event[2]-self.lambda_y(y)-1]
+                return self.buffer[self.pad_pos_y + mouse_event[2] - self.lambda_y(y) - 1]
             except IndexError:
                 pass
 
     def add_new(self, name: str):
         self.buffer.append(name)
 
-    def set_buffer(self, buff):
+    def set_buffer(self, buff: list):
         self.buffer = buff
         self.draw()

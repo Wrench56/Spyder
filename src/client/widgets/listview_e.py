@@ -5,20 +5,20 @@ import curses
 
 
 class ListViewE(ListView):
-    def __init__(self, stdscr, width=20, height=100):
+    def __init__(self, stdscr: curses.window, width: int = 20, height: int = 100):
         super().__init__(stdscr, width, height)
-        self.buffer = []
+        self.buffer: list = []
 
     def draw_items(self):
         line = 0
         for item in self.buffer:
             line = item.draw(self.pad, line)
 
-    def handle_mouse_input(self, mouse_event, x, y):
+    def handle_mouse_input(self, mouse_event: tuple, x: int, y: int):
         if mouse_event[4] == curses.BUTTON1_CLICKED:
             result = 0
             for node in self.buffer:
-                result = node.get_by_index(self.pad_pos_y+mouse_event[2]-self.lambda_y(y), result)
+                result = node.get_by_index(self.pad_pos_y+mouse_event[2]-self.lambda_y(y), result)  # noqa: E226
                 if isinstance(result, str):
                     return result
                 if isinstance(result, bool):

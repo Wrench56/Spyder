@@ -2,7 +2,7 @@ from utils.colors import colored_addstr
 
 
 class Node:
-    def __init__(self, name, nodes=[], is_expanded=True) -> None:
+    def __init__(self, name: str, nodes: list = [], is_expanded: bool = True) -> None:
         self.name: str = name
 
         self.nodes: list = nodes
@@ -55,10 +55,10 @@ class Node:
         if not self.is_expanded:
             return line
         for i, node in enumerate(self.nodes):
-            if len(self.nodes)-1 == i:
+            if len(self.nodes) - 1 == i:
                 new_tab = '└'
             else:
                 new_tab = '├'
-            line = node.draw(pad, line, tab=(tab.replace('├', '│').replace('└', ' ')+new_tab))
+            line = node.draw(pad, line, tab=(tab.replace('├', '│').replace('└', ' ') + new_tab))
 
         return line

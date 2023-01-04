@@ -1,7 +1,6 @@
 import os
 import logging
 import shutil
-import json
 import base64
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -12,6 +11,7 @@ class StepFailed(Exception):
     def __init__(self, step, *args) -> None:
         self.step = step
         super().__init__(*args)
+
 
 # PARTIALLY WRITTEN BY CHAT GPT - 11.12.2022 - (WANTED TO TEST IT)
 def _encrypt_json(json_: dict, key: str):
@@ -48,6 +48,7 @@ def run_all(status_func, new_user_struct):
     finally:
         os.chdir(prev_cwd)
 
+
 def _create_user_folder(status_func, username):
     if os.path.exists(f'{os.getcwd()}/{username}'):
         logging.critical('User already exists!')
@@ -57,11 +58,13 @@ def _create_user_folder(status_func, username):
     os.mkdir(f'{os.getcwd()}/{username}')
     status_func('User directory created', ' OK ')
 
+
 def _create_user_config(status_func, username):
     os.mkdir(f'./{username}/config')
     with open(f'./{username}/config/config.yaml', 'w') as cfile:
         cfile.close()
     status_func('Config files created', ' OK ')
+
 
 def _create_logins_file(status_func, username, password):
     os.mkdir(f'./{username}/secrets')
@@ -75,7 +78,7 @@ def _create_logins_file(status_func, username, password):
     // IF YOU ARE NOT THE OWNER //
     // OF THIS USER GET OUT!    //
     //////////////////////////////
-    
+
     {_encrypt_json(json_, password)}
     '''
 
@@ -84,4 +87,3 @@ def _create_logins_file(status_func, username, password):
         lfile.close()
 
     status_func('Login file created', ' OK ')
-

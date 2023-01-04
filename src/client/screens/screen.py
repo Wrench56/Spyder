@@ -1,5 +1,6 @@
 import math
 
+
 class Screen:
     def __init__(self, stdscr) -> None:
         self.stdscr = stdscr
@@ -16,8 +17,8 @@ class Screen:
                 elif width < 20 and width >= 10:
                     text = 'Too small!'
                 elif width < 10 and width >= 6:
-                    text = 'Small' # Might not be needed, some OS does not even allow so small windows
-                self.stdscr.addstr(math.floor(height/2), math.floor((width-len(text))/2), text)
+                    text = 'Small'  # Might not be needed, some OS does not even allow so small windows
+                self.stdscr.addstr(math.floor(height / 2), math.floor((width - len(text)) / 2), text)
                 self.stdscr.refresh()
 
                 return False
@@ -25,7 +26,7 @@ class Screen:
             if height < self.min_height:
                 self.stdscr.erase()
                 text = 'Screen too small!'
-                self.stdscr.addstr(math.floor(height/2), math.floor((width-len(text))/2), text)
+                self.stdscr.addstr(math.floor(height / 2), math.floor((width - len(text)) / 2), text)
                 self.stdscr.refresh()
 
                 return False

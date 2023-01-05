@@ -21,7 +21,7 @@ class Subwindow(widget.Widget):
             self.window.resize(1, 1)
 
         self.window.mvwin(self.lambda_y(y), self.lambda_x(x))
-        self.window.resize(self.lambda_h(y), self.lambda_w(x))
+        self.window.resize(self.lambda_h(y), self.lambda_w(x))  # type: ignore[misc]
         if self.border:
             self.window.border(0)
         self.window.refresh()

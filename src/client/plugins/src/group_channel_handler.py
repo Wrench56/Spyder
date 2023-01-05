@@ -1,9 +1,9 @@
 from events import on_start
 
 
-def start():
+def start() -> None:
     print('Function loaded')
 
 
-def init():
+def init() -> None:
     on_start.subscribe(start)

@@ -37,3 +37,7 @@ class ListViewE(ListView):
 
     def add_new_node(self, path: str, node: Node) -> None:
         self.get_item(path).add_node(node)
+
+    def set_buffer(self, buff: List[Node]) -> None:  # type: ignore[override]
+        self.buffer = buff
+        self.draw()

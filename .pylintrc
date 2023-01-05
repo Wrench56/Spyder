@@ -1,0 +1,28 @@
+[MASTER]
+
+# Client main module scope (works from VSCode AND Terminal as well, true multiOS solution, I spent 3-4 hours debugging this :p)
+init-hook='import sys, re, os; path = [elem for elem in sys.argv if "Spyder" in elem]; jpath = [*(re.search(".*Spyder", path[0]).group(0) if len(path) > 0 else os.getcwd()).split(os.sep), "src", "client"]; jpath[0] += os.sep; sys.path.append(os.path.join(*jpath))'
+
+[BASIC]
+
+# Accepted variable names
+good-names=x,y,sx,sy,lx,ly,ch,i,j,ip
+
+[MESSAGES CONTROL]
+
+# Disable specific errors/warnings
+disable=line-too-long,too-many-instance-attributes,too-many-branches,C0116,C0115,C0114,logging-fstring-interpolation
+
+[LOGGING]
+logging-modules=logging
+
+[STRING]
+
+# Check consistent use of ''/"" (I prefer '')
+check-quote-consistency=True
+
+[TYPECHECK]
+ignored-modules=curses
+
+[VARIABLES]
+allow-global-unused-variables=True

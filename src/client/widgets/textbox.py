@@ -1,10 +1,11 @@
+import curses
+
 from widgets import widget
 from utils import keyboard, cursor
-import curses
 
 
 class Textbox(widget.Widget):
-    def __init__(self, stdscr, width: int = 20, height: int = 100, show_chars: bool | str = False):
+    def __init__(self, stdscr: object, width: int = 20, height: int = 100, show_chars: bool | str = False):
         super().__init__(stdscr)
 
         self.buffer = ['']
@@ -22,7 +23,7 @@ class Textbox(widget.Widget):
         self.pad = curses.newpad(self.height, self.width)
         self.pad.scrollok(True)
 
-    def draw(self):
+    def draw(self) -> None:
         x, y = super().getxy()
         ly = self.lambda_y(y)
         lx = self.lambda_x(x)
@@ -31,13 +32,13 @@ class Textbox(widget.Widget):
         self.empty()
         for i, line in enumerate(self.buffer):
             if self.show_chars:
-                line = len(line) * self.show_chars
+                line = self.show_chars * len(line)  # type: ignore
             self.pad.addstr(i, 0, line)
 
         sy, sx = self.stdscr.getbegyx()
         self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # noqa: E226
 
-    def input(self, ch):
+    def input(self, ch: int) -> None:
         x, y = super().getxy()
 
         if ch == keyboard.KEY_BACKSPACE:
@@ -77,19 +78,19 @@ class Textbox(widget.Widget):
         lx, ly = self.lambda_x(x), self.lambda_y(y)
         self.move_cursor(lx, ly)
 
-    def move_cursor(self, lx, ly):
+    def move_cursor(self, lx: int, ly: int) -> None:
         sy, sx = self.stdscr.getbegyx()
         cursor.move(sx + lx + self.cur_x, sy + ly + self.cur_y)
 
-    def update_cursor(self):
+    def update_cursor(self) -> None:
         x, y = super().getxy()
         lx, ly = self.lambda_x(x), self.lambda_y(y)
 
         self.move_cursor(lx, ly)
 
-    def empty(self):
+    def empty(self) -> None:
         for y, line in enumerate(self.buffer):
             self.pad.addstr(y, 0, ' ' * (len(line) + 1))  # +1 because of the backspace operation...
 
-    def get_text(self):
+    def get_text(self) -> str:
         return '\n'.join(self.buffer)

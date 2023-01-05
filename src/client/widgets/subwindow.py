@@ -1,15 +1,15 @@
-from widgets import widget
-
 import curses
+
+from widgets import widget
 
 
 class Subwindow(widget.Widget):
-    def __init__(self, stdscr: curses.window, border: bool = True):
+    def __init__(self, stdscr: object, border: bool = True):
         self.border: bool = border
-        self.window: curses.window = stdscr.subwin(0, 0)
+        self.window: object = stdscr.subwin(0, 0)
         super().__init__(stdscr)
 
-    def draw(self):
+    def draw(self) -> None:
         x, y = super().getxy()
 
         # I have no idea why the previous version failed, but this is working pretty well!
@@ -26,5 +26,5 @@ class Subwindow(widget.Widget):
             self.window.border(0)
         self.window.refresh()
 
-    def get(self):
+    def get(self) -> object:
         return self.window

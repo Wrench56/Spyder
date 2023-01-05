@@ -32,7 +32,7 @@ class Textbox(widget.Widget):
         self.empty()
         for i, line in enumerate(self.buffer):
             if self.show_chars:
-                line = self.show_chars * len(line)  # type: ignore
+                line = self.show_chars * len(line)  # type: ignore[assignment]
             self.pad.addstr(i, 0, line)
 
         sy, sx = self.stdscr.getbegyx()

@@ -1,8 +1,9 @@
-import requests
 import socket
 
+import requests
 
-def connection():
+
+def connection() -> bool:
     try:
         requests.get('https://google.com', timeout=5.0)
         return True
@@ -12,5 +13,5 @@ def connection():
         return False
 
 
-def get_local_ip():
-    return socket.gethostbyname(str(socket.gethostname()))
+def get_local_ip() -> str:
+    return socket.gethostbyname(socket.gethostname())

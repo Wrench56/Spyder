@@ -1,3 +1,5 @@
+from typing import List, Union
+
 import curses
 
 BLACK_ON_BLACK = 1
@@ -24,7 +26,7 @@ ANSI_COLORS = {
 }
 
 
-def init():
+def init() -> None:
     curses.start_color()
 
     curses.init_pair(BLACK_ON_BLACK, curses.COLOR_BLACK, curses.COLOR_BLACK)  # Am I going to use this anytime?
@@ -39,8 +41,8 @@ def init():
     curses.init_pair(BLACK_ON_WHITE, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
 
-def parse_ansi_string(string):
-    string_color = []
+def parse_ansi_string(string: str) -> List[Union[str, int, None]]:
+    string_color: List[Union[str, int, None]] = []
     iter_string = iter(string)
     text = ''
     color = None
@@ -64,11 +66,11 @@ def parse_ansi_string(string):
         char_number += 1
     string_color.append(text)
     string_color.append(color)
-    return tuple(string_color)
+    return string_color
 
 
-def colored_addstr(stdscr, x, y, string):
-    string_color = parse_ansi_string(string)
+def colored_addstr(stdscr: object, x: int, y: int, input_string: str) -> None:
+    string_color = parse_ansi_string(input_string)
     x_shift = 0
     for i in range(0, len(string_color), 2):
         string = string_color[i]
@@ -78,4 +80,4 @@ def colored_addstr(stdscr, x, y, string):
             stdscr.addstr(y, x_shift + x, string)
         else:
             stdscr.addstr(y, x_shift + x, string, curses.color_pair(string_color[i + 1]))
-        x_shift += len(string)
+        x_shift += len(string)  # type: ignore[arg-type]

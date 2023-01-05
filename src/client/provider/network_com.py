@@ -1,3 +1,5 @@
+from typing import Final
+
 import logging
 from time import sleep
 import json
@@ -6,12 +8,9 @@ import base_com
 
 
 class NetworkCommunicator(base_com.BaseCommunicator):
-    WAIT_BETWEEN_MESSAGES = 0.0000000001
+    WAIT_BETWEEN_MESSAGES: Final = 0.0000000001
 
-    def __init__(self) -> None:
-        super().__init__()
-
-    def login(self):
+    def login(self) -> None:
         login_json = {
             'o': 1,         # [1. Operation] - Login
             's': False,     # [Server] - False

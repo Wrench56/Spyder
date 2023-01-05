@@ -1,18 +1,19 @@
 import socket
 import logging
 from provider.encryption import asymmetric, symmetric, rndinjection as rndi
+from cryptography.fernet import Fernet
 
 
-class BaseCommunicator():
+class BaseCommunicator(socket.socket):
     def __init__(self) -> None:
-        self.fernet_key = None
+        self.fernet_key: Fernet
         super().__init__(socket.AF_INET, socket.SOCK_STREAM)
 
-    def start(self, ip, port):
+    def start(self, ip: str, port: int) -> None:
         self.connect((ip, port))
         self.auth()
 
-    def auth(self):
+    def auth(self) -> bool:
         self.send(b'WeAreSpyder')  # magic sentence
 
         public_key = asymmetric.Key()
@@ -26,10 +27,11 @@ class BaseCommunicator():
         magic_answer = rndi.decrypt(symmetric.decrypt(magic_answer_encoded, self.fernet_key).decode())
         if magic_answer != 'UnitedWeStand':
             logging.critical('Server sent wrong magic answer! Aborting...')
-            return
+            return False
+        return True
 
-    def send_encrypted(self, data):
+    def send_encrypted(self, data: str) -> None:
         self.send(symmetric.encrypt(rndi.encrypt(data).encode(), self.fernet_key))
 
-    def recv_encrypted(self):
+    def recv_encrypted(self) -> str:
         return rndi.decrypt(symmetric.decrypt(self.recv(1024), self.fernet_key).decode())

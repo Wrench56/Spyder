@@ -4,7 +4,7 @@ from utils.colors import colored_addstr
 
 
 class Node:
-    def __init__(self, name: str, nodes: Optional[List['Node']], is_expanded: bool = True) -> None:
+    def __init__(self, name: str, nodes: Optional[List['Node']] = None, is_expanded: bool = True) -> None:
         self.name: str = name
 
         if nodes is None:

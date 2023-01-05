@@ -1,17 +1,21 @@
+from abc import ABC, abstractmethod
+
 import socket
 import logging
 from provider.encryption import asymmetric, symmetric, rndinjection as rndi
 from cryptography.fernet import Fernet
 
 
-class BaseCommunicator(socket.socket):
+class BaseCommunicator(socket.socket, ABC):
     def __init__(self) -> None:
         self.fernet_key: Fernet
         super().__init__(socket.AF_INET, socket.SOCK_STREAM)
 
     def start(self, ip: str, port: int) -> None:
         self.connect((ip, port))
-        self.auth()
+        if not self.auth():
+            return
+        self.login()
 
     def auth(self) -> bool:
         self.send(b'WeAreSpyder')  # magic sentence
@@ -35,3 +39,7 @@ class BaseCommunicator(socket.socket):
 
     def recv_encrypted(self) -> str:
         return rndi.decrypt(symmetric.decrypt(self.recv(1024), self.fernet_key).decode())
+
+    @abstractmethod
+    def login(self) -> bool:
+        pass

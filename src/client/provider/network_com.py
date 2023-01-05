@@ -4,13 +4,13 @@ import logging
 from time import sleep
 import json
 
-import base_com
+from provider import base_com
 
 
 class NetworkCommunicator(base_com.BaseCommunicator):
     WAIT_BETWEEN_MESSAGES: Final = 0.0000000001
 
-    def login(self) -> None:
+    def login(self) -> bool:
         login_json = {
             'o': 1,         # [1. Operation] - Login
             's': False,     # [Server] - False
@@ -21,3 +21,5 @@ class NetworkCommunicator(base_com.BaseCommunicator):
         sleep(self.WAIT_BETWEEN_MESSAGES)
         if self.recv_encrypted() == 'F':
             logging.critical('Could not log in to network server! Did your password hash change?')
+            return False
+        return True

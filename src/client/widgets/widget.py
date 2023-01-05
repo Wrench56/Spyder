@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, Callable
+from typing import Tuple, Callable, Optional
 
 
 class Widget(ABC):
@@ -8,13 +8,13 @@ class Widget(ABC):
 
         self.lambda_x: Callable[[int], int] = lambda x: -1
         self.lambda_y: Callable[[int], int] = lambda y: -1
-        self.lambda_w: Callable[[int], int] = lambda w: -1
-        self.lambda_h: Callable[[int], int] = lambda h: -1
+        self.lambda_w: Optional[Callable[[int], int]] = None
+        self.lambda_h: Optional[Callable[[int], int]] = None
 
         self.last_x: int = 0
         self.last_y: int = 0
 
-    def set_size(self, lambda_x: Callable[[int], int], lambda_y: Callable[[int], int], lambda_w: Callable[[int], int], lambda_h: Callable[[int], int]) -> None:
+    def set_size(self, lambda_x: Callable[[int], int], lambda_y: Callable[[int], int], lambda_w: Optional[Callable[[int], int]], lambda_h: Optional[Callable[[int], int]]) -> None:
         self.lambda_x = lambda_x
         self.lambda_y = lambda_y
         self.lambda_w = lambda_w

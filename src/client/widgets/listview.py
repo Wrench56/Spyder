@@ -31,7 +31,7 @@ class ListView(widget.Widget):
         self.draw_items()
 
         sy, sx = self.stdscr.getbegyx()
-        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # noqa: E226
+        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # type: ignore[misc] # noqa: E226
 
     def draw_items(self) -> None:
         for i, item in enumerate(self.buffer):
@@ -53,8 +53,8 @@ class ListView(widget.Widget):
         elif key == curses.KEY_MOUSE:
             x, y = self.getxy()
             mouse_event = curses.getmouse()
-            if self.lambda_x(x) <= mouse_event[1] and self.lambda_x(x) + self.lambda_w(x) >= mouse_event[1]:
-                if self.lambda_y(y) <= mouse_event[2] and self.lambda_y(y) + self.lambda_h(y) >= mouse_event[2]:
+            if self.lambda_x(x) <= mouse_event[1] and self.lambda_x(x) + self.lambda_w(x) >= mouse_event[1]:  # type: ignore[misc]
+                if self.lambda_y(y) <= mouse_event[2] and self.lambda_y(y) + self.lambda_h(y) >= mouse_event[2]:  # type: ignore[misc]
                     return self.handle_mouse_input(mouse_event, x, y)
         return None
 

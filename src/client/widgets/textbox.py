@@ -36,7 +36,7 @@ class Textbox(widget.Widget):
             self.pad.addstr(i, 0, line)
 
         sy, sx = self.stdscr.getbegyx()
-        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # noqa: E226
+        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # type: ignore[misc] # noqa: E226
 
     def input(self, ch: int) -> None:
         x, y = super().getxy()
@@ -46,7 +46,7 @@ class Textbox(widget.Widget):
                 self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x - 1] + self.buffer[self.cur_y][(self.cur_x):]
                 self.cur_x -= 1
         elif ch == keyboard.KEY_DELETE:
-            if self.cur_x < self.lambda_w(x):
+            if self.cur_x < self.lambda_w(x):  # type: ignore[misc]
                 self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x] + self.buffer[self.cur_y][(self.cur_x + 1):]
         elif ch == keyboard.KEY_ENTER:
             if self.pad_pos_y + 1 < self.height:
@@ -66,10 +66,10 @@ class Textbox(widget.Widget):
             if self.cur_x > 0:
                 self.cur_x -= 1
         elif ch == curses.KEY_RIGHT:
-            if self.cur_x < self.lambda_w(x):
+            if self.cur_x < self.lambda_w(x):  # type: ignore[misc]
                 self.cur_x += 1
         else:
-            if self.cur_x < self.lambda_w(x):
+            if self.cur_x < self.lambda_w(x):  # type: ignore[misc]
                 self.cur_x += 1
                 self.buffer[self.cur_y] += chr(ch)
 

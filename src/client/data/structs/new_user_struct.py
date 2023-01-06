@@ -1,7 +1,8 @@
+from typing import Optional
 from dataclasses import dataclass
 
 
 @dataclass
 class NewUserData():
-    username: str = None
-    password: str = None
+    username: Optional[str] = None
+    password: Optional[str] = None

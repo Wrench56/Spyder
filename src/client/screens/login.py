@@ -1,16 +1,17 @@
 # flake8: noqa: E226
 
+import curses
+import math
+import logging
+import sys
+
 from screens import screen, new_user
 from widgets import textbox, label, subwindow
 from utils import art, keyboard, terminal
 
-import curses
-import math
-import logging
-
 
 class Login(screen.Screen):
-    def __init__(self, stdscr: curses.window, struct: object) -> None:
+    def __init__(self, stdscr: object, struct: object) -> None:
         super().__init__(stdscr)
         self.struct = struct
 
@@ -23,7 +24,7 @@ class Login(screen.Screen):
         # Start the logic part
         self.logic()
 
-    def setup(self):
+    def setup(self) -> None:
 
         # UI Infos:
         #  - Width: 65
@@ -54,7 +55,7 @@ class Login(screen.Screen):
 
         self.resize()
 
-    def logic(self):
+    def logic(self) -> None:
         self.username_textbox.update_cursor()
 
         box_index: int = 0
@@ -62,7 +63,7 @@ class Login(screen.Screen):
             ch: int = self.stdscr.getch()
             if ch == curses.KEY_HOME:
                 break
-            elif ch == curses.KEY_RESIZE:
+            if ch == curses.KEY_RESIZE:
                 self.resize()
                 self.focus_cursor(box_index)
             elif ch == keyboard.KEY_TAB:
@@ -71,10 +72,10 @@ class Login(screen.Screen):
             elif ch == keyboard.KEY_ENTER:
                 username: str = self.username_textbox.get_text()
                 password: str = self.password_textbox.get_text()
-                if username == '' or password == '':
+                if username == '' or password == '':  # nosec B105
                     logging.critical('No username and/or password provided!')
                     curses.endwin()
-                    quit()
+                    sys.exit()
 
                 self.struct.username = username
                 self.struct.password = password
@@ -96,13 +97,13 @@ class Login(screen.Screen):
                 else:
                     self.password_textbox.input(ch)
 
-    def focus_cursor(self, box_index):
+    def focus_cursor(self, box_index: int) -> None:
         if box_index == 0:
             self.username_textbox.update_cursor()
         else:
             self.password_textbox.update_cursor()
 
-    def resize(self):
+    def resize(self) -> None:
         y, x = self.stdscr.getmaxyx()
         if not self.resize_check(x, y):
             return

@@ -3,7 +3,7 @@ import importlib
 import logging
 
 
-def load_plugins():
+def load_plugins() -> None:
     for plugin in pathlib.Path(f'{pathlib.Path(__file__).resolve().parent}/src/').glob('*.py'):
         try:
             importlib.import_module(f'plugins.src.{plugin.name[:-3]}').init()

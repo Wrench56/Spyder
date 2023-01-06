@@ -14,8 +14,8 @@
 # this in the future.
 
 
-stdscr = None
+stdscr: object = None
 
 
-def move(new_x, new_y):
+def move(new_x: int, new_y: int) -> None:
     stdscr.move(new_y, new_x)

@@ -1,29 +1,33 @@
+from typing import List, Optional, Union, Literal
+
 from utils.colors import colored_addstr
 
 
 class Node:
-    def __init__(self, name: str, nodes: list = [], is_expanded: bool = True) -> None:
+    def __init__(self, name: str, nodes: Optional[List['Node']] = None, is_expanded: bool = True) -> None:
         self.name: str = name
 
-        self.nodes: list = nodes
+        if nodes is None:
+            nodes = []
+        self.nodes: List['Node'] = nodes
         self.is_expanded: bool = is_expanded
 
-    def toggle_state(self):
+    def toggle_state(self) -> bool:
         if len(self.nodes) > 0:
-            self.is_expanded = False if self.is_expanded else True
+            self.is_expanded = not self.is_expanded
             return True
         return False
 
-    def add_node(self, node_obj: object):
+    def add_node(self, node_obj: 'Node') -> None:
         self.nodes.append(node_obj)
 
-    def get_node(self, path: list):
+    def get_node(self, path: List[str]) -> Union[Literal[False], 'Node']:
         for node in self.nodes:
             if node.name == path[0]:
                 return node.get_node(path[1:])
         return False
 
-    def get_by_index(self, f_index: int, c_index: int, path: str = ''):
+    def get_by_index(self, f_index: int, c_index: int, path: str = '') -> Union[bool, str, int]:
         path += self.name
         c_index += 1
         if c_index == f_index:
@@ -36,13 +40,13 @@ class Node:
             path += '/'
             for node in self.nodes:
                 result = node.get_by_index(f_index, c_index, path)
-                if isinstance(result, bool) or isinstance(result, str):
+                if isinstance(result, (bool, str)):
                     return result
 
                 c_index = result
         return c_index
 
-    def draw(self, pad, line: int, tab: str = ''):
+    def draw(self, pad: object, line: int, tab: str = '') -> int:
         if len(self.nodes) > 0:
             if self.is_expanded:
                 ec_char = '▾'

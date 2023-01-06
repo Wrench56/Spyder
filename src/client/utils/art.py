@@ -1,4 +1,6 @@
+# Ignore the backslashes in the ASCII art:
 # flake8: noqa: W605
+# pylint: disable=anomalous-backslash-in-string
 
 LOGO = '''
            ;               ,

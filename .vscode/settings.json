@@ -1,0 +1,48 @@
+{
+    "logViewer.watch": [
+        {
+            "groupName": "Server logs",
+            "watches": [
+                {
+                    "title": "all",
+                    "pattern": "./src/servers/network/data/logs/logfile.log"
+                },
+                {
+                    "title": "errors",
+                    "pattern": "./src/servers/network/data/logs/logfile.log"
+                }
+            ]
+            
+        },
+        {
+            "groupName": "Client logs",
+            "watches": [
+                {
+                    "title": "all",
+                    "pattern": "./src/client/logs/*.log"
+                }
+            ]
+            
+        }
+    ],    
+    "python.linting.enabled": true,
+    "python.analysis.extraPaths": [
+        "./src/client",
+    ],
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8CategorySeverity.E": "Error",
+    "python.linting.flake8CategorySeverity.F": "Error",
+    "python.linting.flake8CategorySeverity.W": "Warning",
+    "python.linting.flake8Args": ["--ignore=E501"],
+    "python.linting.banditEnabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.mypyArgs": [
+        "--config-file=.mypy.ini",
+    ],
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintCategorySeverity.refactor": "Hint",
+    "python.linting.pylintCategorySeverity.convention": "Hint",
+    "python.linting.pylintArgs": [
+       "--rcfile=.pylintrc"
+    ]   
+}

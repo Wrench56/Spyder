@@ -1,13 +1,13 @@
+import curses
+
 from screens import screen
 from widgets import textbox, label, subwindow
 from utils import colors, keyboard, terminal, create_user
 from data.structs.new_user_struct import NewUserData
 
-import curses
-
 
 class NewUser(screen.Screen):
-    def __init__(self, stdscr) -> None:
+    def __init__(self, stdscr: object) -> None:
         super().__init__(stdscr)
         self.focus = 0
         self.status = {
@@ -29,7 +29,7 @@ class NewUser(screen.Screen):
         # Start the logic part
         self.logic()
 
-    def setup(self):
+    def setup(self) -> None:
         self.set_min(68, 15)
 
         self.username_win = subwindow.Subwindow(self.stdscr)
@@ -67,7 +67,7 @@ class NewUser(screen.Screen):
 
         self.refresh_focus(0)
 
-    def logic(self):
+    def logic(self) -> None:
         while True:
             ch = self.stdscr.getch()
             if ch == curses.KEY_RESIZE:
@@ -94,7 +94,7 @@ class NewUser(screen.Screen):
             else:
                 self.input_focused(self.focus, ch)
 
-    def color_status_text(self):
+    def color_status_text(self) -> None:
         for i, value in enumerate(self.status.values()):
             if value == 'UNKW':
                 self.status_win.get().addstr(1 + i, 5, 'UNKW', curses.color_pair(colors.YELLOW_ON_BLACK))
@@ -104,14 +104,14 @@ class NewUser(screen.Screen):
                 self.status_win.get().addstr(1 + i, 5, ' OK ', curses.color_pair(colors.GREEN_ON_BLACK))
         self.refresh_focus(self.focus)
 
-    def format_status(self):
-        formatted_text = ''
-        for category in self.status.keys():
-            formatted_text += f' > [{self.status[category]}] {category}\n'
+    def format_status(self) -> str:
+        formatted_text: str = ''
+        for item in self.status.items():
+            formatted_text += f' > [{item[1]}] {item[0]}\n'
 
         return formatted_text
 
-    def input_focused(self, focus, input_):
+    def input_focused(self, focus: int, input_: int) -> None:
         if focus == 0:
             self.username_textbox.input(input_)
         elif focus == 1:
@@ -119,7 +119,7 @@ class NewUser(screen.Screen):
         elif focus == 2:
             self.password_conf_textbox.input(input_)
 
-    def refresh_focus(self, focus):
+    def refresh_focus(self, focus: int) -> None:
         if focus == 0:
             self.username_textbox.update_cursor()
         elif focus == 1:
@@ -127,8 +127,8 @@ class NewUser(screen.Screen):
         elif focus == 2:
             self.password_conf_textbox.update_cursor()
 
-    def create_user(self):
-        def cleanup():
+    def create_user(self) -> None:
+        def cleanup() -> None:
             self.password_textbox.draw()
             self.password_conf_textbox.draw()
             self.username_textbox.draw()
@@ -139,14 +139,14 @@ class NewUser(screen.Screen):
             self.set_new_status('Valid username', 'FAIL')
             cleanup()
             return
-        else:
-            self.set_new_status('Valid username', ' OK ')
+        self.set_new_status('Valid username', ' OK ')
+
         if self.password_textbox.get_text() == '':
             self.set_new_status('Valid password', 'FAIL')
             cleanup()
             return
-        else:
-            self.set_new_status('Valid password', ' OK ')
+        self.set_new_status('Valid password', ' OK ')
+
         if self.password_conf_textbox.get_text() == self.password_textbox.get_text():
             self.set_new_status('Passwords match', ' OK ')
         else:
@@ -157,14 +157,14 @@ class NewUser(screen.Screen):
         create_user.run_all(self.set_new_status, struct)
         cleanup()
 
-    def set_new_status(self, field, status):
+    def set_new_status(self, field: str, status: str) -> None:
         self.status[field] = status
         if status == 'FAIL':
             self.status['USER READY TO USE'] = 'FAIL'
         self.status_text_label.set_text(self.format_status())
         self.resize()
 
-    def resize(self):
+    def resize(self) -> None:
         y, x = self.stdscr.getmaxyx()
         if not self.resize_check(x, y):
             return

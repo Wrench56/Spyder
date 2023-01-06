@@ -1,7 +1,4 @@
-# Editor settings
-.vscode/*
-
-
+# Python bytecode cache folder
 __pycache__
 
 # Folder for experimenting

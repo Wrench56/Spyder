@@ -1,10 +1,13 @@
-import colorama
 import datetime
-import os
-import platform
-import curses
 import logging
 import logging.config
+import os
+import getpass
+import platform
+
+import curses
+import colorama
+
 import yaml
 
 from screens import login
@@ -16,7 +19,7 @@ from data.structs import login_structs
 VERSION = '0.1.0'
 
 
-def main(stdscr):
+def main(stdscr: object) -> None:
     setup()
 
     # Create color pairs
@@ -25,7 +28,7 @@ def main(stdscr):
     if os.getenv('ANSI_COLORS_DISABLED') is None:
         print(f'\033[31m{(" "*20+art.MOTTO)}\033[0m')
     else:
-        print(" " * 20 + art.MOTTO)
+        print(' ' * 20 + art.MOTTO)
     print('=' * 40)
 
     infobox()
@@ -47,9 +50,9 @@ def main(stdscr):
     curses.endwin()
 
 
-def infobox():
-    time_ = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    user_ = os.popen('whoami').read().replace('\n', '')
+def infobox() -> None:
+    time_ = datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    user_ = getpass.getuser()
     conn_ = net.connection()
     ip = net.get_local_ip()
     plat = platform.system()
@@ -69,13 +72,13 @@ def infobox():
     print()
 
 
-def update():
+def update() -> None:
     pass
 
 
-def setup():
-    with open('./config/logger.config.yaml', 'r') as f:
-        config = yaml.safe_load(f.read())
+def setup() -> None:
+    with open('./config/logger.config.yaml', 'r', encoding='utf-8') as cfile:
+        config = yaml.safe_load(cfile.read())
         logging.config.dictConfig(config)
     logging.addLevelName(logging.INFO, 'INFO ')
     logging.addLevelName(logging.WARNING, 'WARN ')

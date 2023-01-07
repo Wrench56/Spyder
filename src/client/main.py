@@ -19,10 +19,9 @@ from data.structs import login_structs
 VERSION = '0.1.0'
 
 
-def main(stdscr: object) -> None:
+def main() -> None:
+    colorama.init()
     setup()
-
-    # Create color pairs
 
     print(art.HEADER)
     if os.getenv('ANSI_COLORS_DISABLED') is None:
@@ -34,6 +33,10 @@ def main(stdscr: object) -> None:
     infobox()
     update()
 
+    curses.wrapper(start_curses)
+
+
+def start_curses(stdscr: object) -> None:
     # Curses configuration
     curses.noecho()
     curses.mousemask(-1)
@@ -87,6 +90,4 @@ def setup() -> None:
 
 
 if __name__ == '__main__':
-    colorama.init()
-    setup()
-    curses.wrapper(main)
+    main()

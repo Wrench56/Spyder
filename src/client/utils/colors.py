@@ -97,7 +97,6 @@ def parse_ansi_string(string: str) -> List[Union[str, int]]:
         text_segment += char
     string_color_list.append(text_segment)
     string_color_list.append(foreground + background)
-    print(string_color_list)
     return string_color_list
 
 

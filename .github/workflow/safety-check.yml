@@ -1,0 +1,13 @@
+name: Python dependency safety check
+
+on:
+  schedule:
+    - cron: 0 6 * * 1,3,5
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Vulnerabilities scan
+        uses: aufdenpunkt/python-safety-check@master

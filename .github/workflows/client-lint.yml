@@ -1,6 +1,6 @@
 name: Lint Client
 on: 
-  pull-request: 
+  pull_request: 
     branches: [ main, dev ]
 
 jobs: 
@@ -33,4 +33,5 @@ jobs:
         mypy src/client --config-file=.mypy.ini
 
     - name: Security check with Bandit
+      run: |
         bandit src/client -r

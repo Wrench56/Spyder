@@ -1,4 +1,4 @@
-from typing import List, Tuple, Any, Union, Final
+from typing import List, Tuple, Iterator, Any, Union, Final
 
 import curses
 
@@ -49,7 +49,7 @@ ANSI_COLORS = {
 
 
 def init() -> None:
-    COLORS: Final[Tuple[Any, Any, Any, Any, Any, Any, Any, Any]] = (
+    COLORS: Final[Tuple[Any, Any, Any, Any, Any, Any, Any, Any, Any]] = (
         -1,  # Default
         curses.COLOR_BLACK,
         curses.COLOR_RED,
@@ -57,7 +57,8 @@ def init() -> None:
         curses.COLOR_YELLOW,
         curses.COLOR_BLUE,
         curses.COLOR_MAGENTA,
-        curses.COLOR_CYAN
+        curses.COLOR_CYAN,
+        curses.COLOR_WHITE
     )
     curses.start_color()
 
@@ -71,30 +72,35 @@ def init() -> None:
 
 def parse_ansi_string(string: str) -> List[Union[str, int]]:
     string_color_list: List[Union[str, int]] = []
-    iter_string = iter(string)
-    text_segment = ''
+    iter_string: Iterator[str] = iter(string)
+    text_segment: str = ''
     foreground: int = FG_DEFAULT
     background: int = BG_DEFAULT
-    for i, char in enumerate(iter_string):
+    char_num: int = 0
+
+    for char in iter_string:
         if char == '\x1b':
-            if string[i + 2] == '3':  # foreground
-                foreground = ANSI_COLORS[string[i + 1:i + 5]]
+            string_color_list.append(text_segment)
+            text_segment = ''
+            string_color_list.append(foreground + background)
+            if string[char_num + 2] == '3':  # foreground
+                foreground = ANSI_COLORS[string[char_num + 1:char_num + 5]]
                 skip = 4
-            elif string[i + 2] == '4':  # background
-                background = ANSI_COLORS[string[i + 1:i + 5]]
+            elif string[char_num + 2] == '4':  # background
+                background = ANSI_COLORS[string[char_num + 1:char_num + 5]]
                 skip = 4
             else:  # reset = 0
                 foreground = FG_DEFAULT
                 background = BG_DEFAULT
                 skip = 3
+
+            char_num += skip + 1
             for _ in range(skip):
                 next(iter_string)
-            string_color_list.append(text_segment)
-            string_color_list.append(foreground + background)
-
             continue
 
         text_segment += char
+        char_num += 1
     string_color_list.append(text_segment)
     string_color_list.append(foreground + background)
     return string_color_list
@@ -107,8 +113,6 @@ def colored_addstr(stdscr: object, x: int, y: int, input_string: str) -> None:
         string = string_color_list[i]
         if string == '':
             continue
-        if string_color_list[i + 1] is None:
-            stdscr.addstr(y, x_shift + x, string)
-        else:
-            stdscr.addstr(y, x_shift + x, string, curses.color_pair(string_color_list[i + 1]))
+
+        stdscr.addstr(y, x_shift + x, string, curses.color_pair(string_color_list[i + 1]))
         x_shift += len(string)  # type: ignore[arg-type]

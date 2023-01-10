@@ -17,6 +17,7 @@ jobs:
         python -m pip install --upgrade pip 
         pip install flake8
         pip install pylint
+        pip install pylint-exit
         pip install mypy
         pip install bandit
 
@@ -35,7 +36,7 @@ jobs:
 
     - name: Lint with Pylint
       run: |
-        pylint src/client --recursive True --rcfile=.pylintrc --reports True
+        pylint src/client --recursive True --rcfile=.pylintrc --reports True || pylint-exit $? --error-fail --warn-fail
 
     - name: Type checks with mypy
       run: |

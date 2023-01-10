@@ -6,7 +6,7 @@ init-hook='import sys, re, os; path = [elem for elem in sys.argv if "Spyder" in 
 [BASIC]
 
 # Accepted variable names
-good-names=x,y,sx,sy,lx,ly,ch,i,j,ip
+good-names=x,y,sx,sy,lx,ly,ch,i,j,ip,bg,fg,COLORS
 
 [MESSAGES CONTROL]
 

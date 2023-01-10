@@ -4,8 +4,8 @@ import curses
 import math
 
 from screens import screen
-from utils import terminal, keyboard
-from widgets import subwindow, listview_e
+from utils import terminal
+from widgets import subwindow, listview_tabbed
 
 from events import on_resize
 
@@ -33,7 +33,7 @@ class Chat(screen.Screen):
         self.set_min(120, 25)
 
         self.channel_win = subwindow.Subwindow(self.stdscr, True)
-        self.channel_lv = listview_e.ListViewE(self.channel_win.get(), width=200, height=10000)
+        self.channel_lv = listview_tabbed.ListViewTabbed(self.channel_win.get(), width=200, height=10000)
         self.chat_win = subwindow.Subwindow(self.stdscr, True)
         self.info_win = subwindow.Subwindow(self.stdscr, True)
         self.input_win = subwindow.Subwindow(self.stdscr, True)
@@ -46,7 +46,7 @@ class Chat(screen.Screen):
             ch = self.stdscr.getch()
             if ch == curses.KEY_HOME:
                 break
-            if ch == keyboard.KEY_TAB:
+            if ch == ord('s'):
                 self.state += 1
                 if self.state == 4:
                     self.state = 0
@@ -56,6 +56,7 @@ class Chat(screen.Screen):
                 if self.resize_check(x, y):
                     on_resize.trigger(x, y)
             elif ch == curses.KEY_RESIZE:
+                self.stdscr.erase()
                 y, x = self.stdscr.getmaxyx()
                 curses.resize_term(y, x)
                 if self.resize_check(x, y):

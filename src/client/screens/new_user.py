@@ -97,11 +97,11 @@ class NewUser(screen.Screen):
     def color_status_text(self) -> None:
         for i, value in enumerate(self.status.values()):
             if value == 'UNKW':
-                self.status_win.get().addstr(1 + i, 5, 'UNKW', curses.color_pair(colors.YELLOW_ON_BLACK))
+                colors.colored_addstr(self.status_win.get(), 5, i + 1, '\x1b[33mUNKW')
             elif value == 'FAIL':
-                self.status_win.get().addstr(1 + i, 5, 'FAIL', curses.color_pair(colors.RED_ON_BLACK))
+                colors.colored_addstr(self.status_win.get(), 5, i + 1, '\x1b[31mFAIL')
             else:
-                self.status_win.get().addstr(1 + i, 5, ' OK ', curses.color_pair(colors.GREEN_ON_BLACK))
+                colors.colored_addstr(self.status_win.get(), 5, i + 1, '\x1b[32m OK ')
         self.refresh_focus(self.focus)
 
     def format_status(self) -> str:

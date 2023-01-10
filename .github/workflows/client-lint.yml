@@ -25,6 +25,7 @@ jobs:
         pip install colorama
         pip install PyYAML
         pip install cryptography
+        pip install rsa
         pip install requests
         pip install coloredlogs
 

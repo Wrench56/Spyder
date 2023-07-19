@@ -37,6 +37,7 @@ class ListViewE(ListView):
             return node.full_path
         else:
             node.toggle_state()
+            self.create_flattend_buffer()
             self.draw()
 
     def get_item(self, path: str) -> Optional[object]:

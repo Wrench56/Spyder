@@ -2,6 +2,7 @@
 
 import curses
 import math
+import logging
 
 from screens import screen
 from utils import terminal
@@ -62,7 +63,7 @@ class Chat(screen.Screen):
                 if self.resize_check(x, y):
                     on_resize.trigger(x, y)
             else:
-                print(self.channel_lv.input(ch))
+                logging.debug(self.channel_lv.input(ch))
 
     def set_size(self) -> None:
 

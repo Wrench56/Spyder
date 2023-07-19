@@ -10,6 +10,7 @@ class ListViewE(ListView):
     def __init__(self, stdscr: object, width: int = 20, height: int = 100):
         super().__init__(stdscr, width, height)
         self.buffer: List[Node] = []  # type: ignore[assignment]
+        self.flattend_buffer: List[Node] = [] # type: ignore[assignment]
 
     def draw_items(self) -> None:
         line = 0
@@ -18,15 +19,20 @@ class ListViewE(ListView):
 
     def handle_mouse_input(self, mouse_event: Tuple[int, int, int, int, Any], _: int, y: int) -> Optional[str]:
         if mouse_event[4] == curses.BUTTON1_CLICKED:
-            result = 0
-            for node in self.buffer:
-                result = node.get_by_index(self.pad_pos_y + mouse_event[2] - self.lambda_y(y), result)  # type: ignore[assignment]
-                if isinstance(result, str):
-                    return result
-                if isinstance(result, bool):
-                    break
-            self.draw()
+            try:
+                node = self.flattend_buffer[self.pad_pos_y + mouse_event[2] - self.lambda_y(y) - 1]
+                if len(node.nodes) == 0:
+                    return node
+                else:
+                    node.toggle_state()
+                    self.draw()
+            except IndexError:
+                # User didn't click on menu point
+                pass
         return None
+    
+    def selected_item(self) -> Optional[str]:
+        return self.flattend_buffer[self.cursor].full_path
 
     def get_item(self, path: str) -> Optional[object]:
         path_segments = path.split('/')
@@ -37,7 +43,19 @@ class ListViewE(ListView):
 
     def add_new_node(self, path: str, node: Node) -> None:
         self.get_item(path).add_node(node)
+        node.set_full_path(path)
 
-    def set_buffer(self, buff: List[Node]) -> None:  # type: ignore[override]
+    def create_flattend_buffer(self):
+        self.flattend_buffer = []
+        for node in self.buffer:
+            self.flattend_buffer.extend(node.flatten())
+        
+        self.cursor_border = len(self.flattend_buffer) - 1
+
+    def set_buffer(self, buff: List[Node], refresh=False) -> None:  # type: ignore[override]
         self.buffer = buff
+        # This might be slow!
+        for node in self.buffer:
+            node.set_full_path('', refresh=refresh)
+        self.create_flattend_buffer()
         self.draw()

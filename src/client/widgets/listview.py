@@ -15,6 +15,7 @@ class ListView(widget.Widget):
         self.pad_pos_y = 0
 
         self.cursor = 0
+        self.cursor_border = height
 
         self.width = width
         self.height = height
@@ -39,7 +40,7 @@ class ListView(widget.Widget):
 
     def input(self, key: int) -> Optional[str]:
         if key == curses.KEY_DOWN:
-            if self.cursor >= self.height:
+            if self.cursor >= self.cursor_border or self.cursor >= self.height:
                 return None
             self.cursor += 1
             self.draw()
@@ -74,4 +75,5 @@ class ListView(widget.Widget):
 
     def set_buffer(self, buff: List[str]) -> None:
         self.buffer = buff
+        self.cursor_border = len(self.buffer) - 1
         self.draw()

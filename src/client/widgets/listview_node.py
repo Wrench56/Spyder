@@ -6,11 +6,22 @@ from utils.colors import colored_addstr
 class Node:
     def __init__(self, name: str, nodes: Optional[List['Node']] = None, is_expanded: bool = True) -> None:
         self.name: str = name
+        self.full_path: str = ''
 
         if nodes is None:
             nodes = []
         self.nodes: List['Node'] = nodes
         self.is_expanded: bool = is_expanded
+
+    def set_full_path(self, path: str, refresh: bool = True):
+        if not refresh and self.full_path != '':
+            return
+        if self.full_path == f'{path}{self.name}':
+            return
+
+        self.full_path = f'{path}{self.name}'
+        for node in self.nodes:
+            node.set_full_path(f'{self.full_path}/')
 
     def toggle_state(self) -> bool:
         if len(self.nodes) > 0:
@@ -20,6 +31,7 @@ class Node:
 
     def add_node(self, node_obj: 'Node') -> None:
         self.nodes.append(node_obj)
+        node_obj.set_full_path(self.full_path)
 
     def get_node(self, path: List[str]) -> Union[Literal[False], 'Node']:
         for node in self.nodes:
@@ -27,24 +39,13 @@ class Node:
                 return node.get_node(path[1:])
         return False
 
-    def get_by_index(self, f_index: int, c_index: int, path: str = '') -> Union[bool, str, int]:
-        path += self.name
-        c_index += 1
-        if c_index == f_index:
-            if len(self.nodes) > 0:
-                self.toggle_state()
-                return self.is_expanded
-            return path
-
+    def flatten(self):
+        flattend_list = [self]
         if self.is_expanded:
-            path += '/'
             for node in self.nodes:
-                result = node.get_by_index(f_index, c_index, path)
-                if isinstance(result, (bool, str)):
-                    return result
+                flattend_list.extend(node.flatten())
 
-                c_index = result
-        return c_index
+        return flattend_list
 
     def draw(self, pad: object, line: int, tab: str = '') -> int:
         if len(self.nodes) > 0:

@@ -55,7 +55,7 @@ class Node:
                 ec_char = '▸'
         else:
             ec_char = '╴'
-        colored_addstr(pad, 0, line, f'{tab}{ec_char}{self.name}')
+        colored_addstr(pad, 2, line, f'{tab}{ec_char}{self.name}')
         line += 1
         if not self.is_expanded:
             return line

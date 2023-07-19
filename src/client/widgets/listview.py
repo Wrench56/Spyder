@@ -30,13 +30,14 @@ class ListView(widget.Widget):
 
         self.pad.erase()
         self.draw_items()
+        colors.colored_addstr(self.pad, 0, self.cursor, '>')
 
         sy, sx = self.stdscr.getbegyx()
         self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # type: ignore[misc] # noqa: E226
 
     def draw_items(self) -> None:
         for i, item in enumerate(self.buffer):
-            colors.colored_addstr(self.pad, 0, i, item)
+            colors.colored_addstr(self.pad, 2, i, item)
 
     def input(self, key: int) -> Optional[str]:
         if key == curses.KEY_DOWN:

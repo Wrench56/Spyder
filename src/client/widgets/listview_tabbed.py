@@ -105,12 +105,14 @@ class ListViewTabbed(Widget):
                     if self.cursor > 0:
                         self.cursor -= 1
                         self.calculate_pad_scroll()
+                        self.listview.cursor = 0
                         self.draw()
                 # Next tab
                 elif self.lambda_w(x) + sx + 1 == mouse_event[1]:  # type: ignore[misc]
                     if self.cursor < len(self.tabs.keys()) - 1:
                         self.cursor += 1
                         self.calculate_pad_scroll()
+                        self.listview.cursor = 0
                         self.draw()
                 # Select tab with mouse
                 elif sx + 1 < mouse_event[1] < self.lambda_w(x) + sx + 1:  # type: ignore[misc]
@@ -119,5 +121,8 @@ class ListViewTabbed(Widget):
             return self.listview.input(key)
         else:
             return self.listview.input(key)
+        
+        # Reset the cursor of the listview
+        self.listview.cursor = 0
         self.draw()
         return None

@@ -32,7 +32,12 @@ class ListViewE(ListView):
         return None
     
     def selected_item(self) -> Optional[str]:
-        return self.flattend_buffer[self.cursor].full_path
+        node = self.flattend_buffer[self.cursor]
+        if len(node.nodes) == 0:
+            return node.full_path
+        else:
+            node.toggle_state()
+            self.draw()
 
     def get_item(self, path: str) -> Optional[object]:
         path_segments = path.split('/')

@@ -1,4 +1,4 @@
-from events import on_start
+import events
 
 
 def start() -> None:
@@ -6,4 +6,4 @@ def start() -> None:
 
 
 def init() -> None:
-    on_start.subscribe(start)
+    events.start.subscribe(start)

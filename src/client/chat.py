@@ -1,9 +1,9 @@
 from screens import chat
-from events import on_start
+import events
 from plugins import handler
 
 
 def main(stdscr: object, _: object) -> None:
     handler.load_plugins()
     chat.Chat(stdscr)
-    on_start.trigger()
+    events.start.trigger()

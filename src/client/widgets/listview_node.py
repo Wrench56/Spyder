@@ -13,7 +13,7 @@ class Node:
         self.nodes: List['Node'] = nodes
         self.is_expanded: bool = is_expanded
 
-    def set_full_path(self, path: str, refresh: bool = True):
+    def set_full_path(self, path: str, refresh: bool = True) -> None:
         if not refresh and self.full_path != '':
             return
         if self.full_path == f'{path}{self.name}':
@@ -39,8 +39,9 @@ class Node:
                 return node.get_node(path[1:])
         return False
 
-    def flatten(self):
-        flattend_list = [self]
+    # Older versions of Python do not support forward referencing
+    def flatten(self) -> List['Node']:
+        flattend_list: List['Node'] = [self]
         if self.is_expanded:
             for node in self.nodes:
                 flattend_list.extend(node.flatten())
@@ -64,6 +65,6 @@ class Node:
                 new_tab = '└'
             else:
                 new_tab = '├'
-            line = node.draw(pad, line, tab=(tab.replace('├', '│').replace('└', ' ') + new_tab))
+            line = node.draw(pad, line, tab=tab.replace('├', '│').replace('└', ' ') + new_tab)
 
         return line

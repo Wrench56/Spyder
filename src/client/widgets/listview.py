@@ -27,12 +27,14 @@ class ListView(widget.Widget):
         x, y = super().getxy()
         ly = self.lambda_y(y)
         lx = self.lambda_x(x)
+        sy, sx = self.stdscr.getbegyx()
 
         self.pad.erase()
+        self.stdscr.refresh()
+
         self.draw_items()
         colors.colored_addstr(self.pad, 0, self.cursor, '>')
 
-        sy, sx = self.stdscr.getbegyx()
         self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # type: ignore[misc] # noqa: E226
 
     def draw_items(self) -> None:

@@ -10,7 +10,7 @@ class ListViewE(ListView):
     def __init__(self, stdscr: object, width: int = 20, height: int = 100):
         super().__init__(stdscr, width, height)
         self.buffer: List[Node] = []  # type: ignore[assignment]
-        self.flattend_buffer: List[Node] = [] # type: ignore[assignment]
+        self.flattend_buffer: List[Node] = []  # type: ignore[assignment]
 
     def draw_items(self) -> None:
         line = 0
@@ -22,23 +22,23 @@ class ListViewE(ListView):
             try:
                 node = self.flattend_buffer[self.pad_pos_y + mouse_event[2] - self.lambda_y(y) - 1]
                 if len(node.nodes) == 0:
-                    return node
-                else:
-                    node.toggle_state()
-                    self.draw()
+                    return node.full_path
+                node.toggle_state()
+                self.draw()
             except IndexError:
                 # User didn't click on menu point
                 pass
         return None
-    
+
     def selected_item(self) -> Optional[str]:
         node = self.flattend_buffer[self.cursor]
         if len(node.nodes) == 0:
             return node.full_path
-        else:
-            node.toggle_state()
-            self.create_flattend_buffer()
-            self.draw()
+        node.toggle_state()
+        self.create_flattend_buffer()
+        self.draw()
+
+        return None
 
     def get_item(self, path: str) -> Optional[object]:
         path_segments = path.split('/')
@@ -51,14 +51,14 @@ class ListViewE(ListView):
         self.get_item(path).add_node(node)
         node.set_full_path(path)
 
-    def create_flattend_buffer(self):
+    def create_flattend_buffer(self) -> None:
         self.flattend_buffer = []
         for node in self.buffer:
             self.flattend_buffer.extend(node.flatten())
-        
+
         self.cursor_border = len(self.flattend_buffer) - 1
 
-    def set_buffer(self, buff: List[Node], refresh=False) -> None:  # type: ignore[override]
+    def set_buffer(self, buff: List[Node], refresh: bool = False) -> None:  # type: ignore[override]
         self.buffer = buff
         # This might be slow!
         for node in self.buffer:

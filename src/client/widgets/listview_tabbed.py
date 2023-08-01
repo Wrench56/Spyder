@@ -121,7 +121,7 @@ class ListViewTabbed(Widget):
             return self.listview.input(key)
         else:
             return self.listview.input(key)
-        
+
         # Reset the cursor of the listview
         self.listview.cursor = 0
         self.draw()

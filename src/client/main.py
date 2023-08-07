@@ -14,7 +14,7 @@ from screens import login
 import chat
 
 from utils import net, art, colors, cursor
-from data.structs import login_structs
+from structs import login_structs
 import events
 
 VERSION = '0.1.0'

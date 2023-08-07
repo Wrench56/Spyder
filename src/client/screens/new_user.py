@@ -3,7 +3,7 @@ import curses
 from screens import screen
 from widgets import textbox, label, subwindow
 from utils import colors, keyboard, terminal, create_user
-from data.structs.new_user_struct import NewUserData
+from structs.new_user_struct import NewUserData
 
 
 class NewUser(screen.Screen):

@@ -3,14 +3,14 @@ from typing import List, Tuple, Any, Optional
 import curses
 
 from widgets.listview import ListView
-from widgets.listview_node import Node
+from widgets.listview_node import ListViewNode
 
 
 class ListViewE(ListView):
     def __init__(self, stdscr: object, width: int = 20, height: int = 100):
         super().__init__(stdscr, width, height)
-        self.buffer: List[Node] = []  # type: ignore[assignment]
-        self.flattend_buffer: List[Node] = []  # type: ignore[assignment]
+        self.buffer: List[ListViewNode] = []  # type: ignore[assignment]
+        self.flattend_buffer: List[ListViewNode] = []  # type: ignore[assignment]
 
     def draw_items(self) -> None:
         line = 0
@@ -47,7 +47,7 @@ class ListViewE(ListView):
                 return item.get_node(path_segments[1:])
         return None
 
-    def add_new_node(self, path: str, node: Node) -> None:
+    def add_new_node(self, path: str, node: ListViewNode) -> None:
         self.get_item(path).add_node(node)
         node.set_full_path(path)
 
@@ -58,7 +58,7 @@ class ListViewE(ListView):
 
         self.cursor_border = len(self.flattend_buffer) - 1
 
-    def set_buffer(self, buff: List[Node], refresh: bool = False) -> None:  # type: ignore[override]
+    def set_buffer(self, buff: List[ListViewNode], refresh: bool = False) -> None:  # type: ignore[override]
         self.buffer = buff
         # This might be slow!
         for node in self.buffer:

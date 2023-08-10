@@ -3,14 +3,14 @@ from typing import List, Optional, Union, Literal
 from utils.colors import colored_addstr
 
 
-class Node:
-    def __init__(self, name: str, nodes: Optional[List['Node']] = None, is_expanded: bool = True) -> None:
+class ListViewNode:
+    def __init__(self, name: str, nodes: Optional[List['ListViewNode']] = None, is_expanded: bool = True) -> None:
         self.name: str = name
         self.full_path: str = ''
 
         if nodes is None:
             nodes = []
-        self.nodes: List['Node'] = nodes
+        self.nodes: List['ListViewNode'] = nodes
         self.is_expanded: bool = is_expanded
 
     def set_full_path(self, path: str, refresh: bool = True) -> None:
@@ -29,19 +29,19 @@ class Node:
             return True
         return False
 
-    def add_node(self, node_obj: 'Node') -> None:
+    def add_node(self, node_obj: 'ListViewNode') -> None:
         self.nodes.append(node_obj)
         node_obj.set_full_path(self.full_path)
 
-    def get_node(self, path: List[str]) -> Union[Literal[False], 'Node']:
+    def get_node(self, path: List[str]) -> Union[Literal[False], 'ListViewNode']:
         for node in self.nodes:
             if node.name == path[0]:
                 return node.get_node(path[1:])
         return False
 
     # Older versions of Python do not support forward referencing
-    def flatten(self) -> List['Node']:
-        flattend_list: List['Node'] = [self]
+    def flatten(self) -> List['ListViewNode']:
+        flattend_list: List['ListViewNode'] = [self]
         if self.is_expanded:
             for node in self.nodes:
                 flattend_list.extend(node.flatten())

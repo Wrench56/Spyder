@@ -10,7 +10,7 @@ class ListViewE(ListView):
     def __init__(self, stdscr: object, width: int = 20, height: int = 100):
         super().__init__(stdscr, width, height)
         self.buffer: List[ListViewNode] = []  # type: ignore[assignment]
-        self.flattend_buffer: List[ListViewNode] = []  # type: ignore[assignment]
+        self.flattend_buffer: List[ListViewNode] = []
 
     def draw_items(self) -> None:
         line = 0

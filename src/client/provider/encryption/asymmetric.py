@@ -14,7 +14,7 @@ class Key:
         return self.key.save_pkcs1(format='DER')
 
     def from_bytes(self, bkey: bytes) -> None:
-        self.key = rsa.PublicKey.load_pkcs1(bkey, format='DER')  # type: ignore[assignment]
+        self.key = rsa.PublicKey.load_pkcs1(bkey, format='DER')
 
 
 def generate_keys() -> Tuple[Key, Key]:

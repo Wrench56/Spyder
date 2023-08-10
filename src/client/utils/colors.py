@@ -114,5 +114,5 @@ def colored_addstr(stdscr: object, x: int, y: int, input_string: str) -> None:
         if string == '':
             continue
 
-        stdscr.addstr(y, x_shift + x, string, curses.color_pair(string_color_list[i + 1]))
+        stdscr.addstr(y, x_shift + x, string, curses.color_pair(string_color_list[i + 1]))  # type: ignore[arg-type]
         x_shift += len(string)  # type: ignore[arg-type]

@@ -1,14 +1,13 @@
 # flake8: noqa: E226
 
 import curses
-import math
 import logging
-
-from screens import screen
-from utils import terminal
-from widgets import subwindow, listview_tabbed
+import math
 
 import events
+import widgets
+from screens import screen
+from utils import terminal
 
 
 class Chat(screen.Screen):
@@ -32,13 +31,15 @@ class Chat(screen.Screen):
     def setup(self) -> None:
         events.resize.subscribe(self.resize)
         self.set_min(120, 25)
+        # Hide the cursor
+        curses.curs_set(0)
 
-        self.channel_win = subwindow.Subwindow(self.stdscr, True)
-        self.channel_lv = listview_tabbed.ListViewTabbed(self.channel_win.get(), width=200, height=10000)
-        self.chat_win = subwindow.Subwindow(self.stdscr, True)
-        self.info_win = subwindow.Subwindow(self.stdscr, True)
-        self.input_win = subwindow.Subwindow(self.stdscr, True)
-        self.special_win = subwindow.Subwindow(self.stdscr, True)
+        self.channel_win = widgets.Subwindow(self.stdscr, True)
+        self.channel_lv = widgets.ListViewTabbed(self.channel_win.get(), width=200, height=10000)
+        self.chat_win = widgets.Subwindow(self.stdscr, True)
+        self.info_win = widgets.Subwindow(self.stdscr, True)
+        self.input_win = widgets.Subwindow(self.stdscr, True)
+        self.special_win = widgets.Subwindow(self.stdscr, True)
 
         self.set_size()
 

@@ -40,6 +40,7 @@ jobs:
 
     - name: Type checks with mypy
       run: |
+        mypy --install-types
         mypy src/client --config-file=.mypy.ini
 
     - name: Security check with Bandit

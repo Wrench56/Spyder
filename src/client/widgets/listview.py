@@ -32,8 +32,9 @@ class ListView(widget.Widget):
         self.pad.erase()
         self.stdscr.refresh()
 
-        self.draw_items()
-        colors.colored_addstr(self.pad, 0, self.cursor, '>')
+        if self.buffer:
+            self.draw_items()
+            colors.colored_addstr(self.pad, 0, self.cursor, '>')
 
         self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # type: ignore[misc] # noqa: E226
 
@@ -42,6 +43,10 @@ class ListView(widget.Widget):
             colors.colored_addstr(self.pad, 2, i, item)
 
     def input(self, key: int) -> Optional[str]:
+        # When there are no items, return
+        if not self.buffer:
+            return None
+
         if key == curses.KEY_DOWN:
             if self.cursor >= self.cursor_border or self.cursor >= self.height:
                 return None

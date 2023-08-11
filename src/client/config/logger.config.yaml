@@ -1,24 +1,9 @@
 version: 1
 formatters:            
-    colorful:
-        (): colorlog.ColoredFormatter
-        fmt: '%(asctime)s | %(module)-20s | [%(tag_log_color)s%(levelname)s%(reset)s]    %(message)s'
-        datefmt: '%Y-%m-%d %H:%M:%S'
-        secondary_log_colors:
-            tag:
-                'WARN ': 'yellow'
-                ERROR: 'red'
-                'CRIT ': 'red'
     custom:
         format: '%(asctime)s | %(module)-20s | [%(levelname)s]   %(message)s'
         datefmt: '%Y-%m-%d %H:%M:%S'
 handlers:
-    priority_terminal:
-        class: logging.StreamHandler
-        level: WARN
-        stream: ext://sys.stdout
-        formatter: colorful
-
     log_file_handler:
         class: logging.handlers.RotatingFileHandler
         level: DEBUG            
@@ -30,4 +15,4 @@ handlers:
 
 root:
     level: DEBUG
-    handlers: [priority_terminal, log_file_handler]
+    handlers: [log_file_handler]

@@ -10,8 +10,8 @@ import colorama
 
 import yaml
 
-from screens import login
-import chat
+from screens import chat, login
+from plugins import handler
 
 from utils import net, art, colors, cursor
 from structs import login_structs
@@ -49,8 +49,12 @@ def start_curses(stdscr: object) -> None:
     login_screen = login.Login(stdscr, login_data)
     del login_screen  # Not necessarily needed
 
-    chat.main(stdscr, login_data)
+    # Open chat screen
+    handler.load_plugins()
+    chat.Chat(stdscr)
+    events.start.trigger()
 
+    # Cleanup
     curses.endwin()
 
 

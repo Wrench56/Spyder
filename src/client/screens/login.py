@@ -1,12 +1,12 @@
 # flake8: noqa: E226
 
 import curses
-import math
 import logging
+import math
 import sys
 
-from screens import screen, new_user
-from widgets import textbox, label, subwindow
+import widgets
+from screens import new_user, screen
 from utils import art, keyboard, terminal
 
 
@@ -31,26 +31,25 @@ class Login(screen.Screen):
         #  - Height: 8
 
         self.set_min(72, 14)
-
-        self.username_win = subwindow.Subwindow(self.stdscr)
+        self.username_win = widgets.Subwindow(self.stdscr)
         self.username_win.set_size(lambda x: math.floor((x-65)/2), lambda y: math.floor((y-8)/2), lambda w: 20, lambda h: 3)
-        self.username_label = label.Label(self.username_win.get(), ' Username ')
+        self.username_label = widgets.Label(self.username_win.get(), ' Username ')
         self.username_label.set_size(lambda x: 1, lambda y: 0, None, None)
-        self.username_textbox = textbox.Textbox(self.username_win.get(), width=19, height=1)
+        self.username_textbox = widgets.Textbox(self.username_win.get(), width=19, height=1)
         self.username_textbox.set_size(lambda x: 1, lambda y: 1, lambda w: 17, lambda h: 0)
 
-        self.password_win = subwindow.Subwindow(self.stdscr)
+        self.password_win = widgets.Subwindow(self.stdscr)
         self.password_win.set_size(lambda x: math.floor((x-65)/2), lambda y: math.floor((y-8)/2)+4, lambda w: 20, lambda h: 3)
-        self.password_label = label.Label(self.password_win.get(), ' Password ')
+        self.password_label = widgets.Label(self.password_win.get(), ' Password ')
         self.password_label.set_size(lambda x: 1, lambda y: 0, None, None)
-        self.password_textbox = textbox.Textbox(self.password_win.get(), width=19, height=1, show_chars='*')
+        self.password_textbox = widgets.Textbox(self.password_win.get(), width=19, height=1, show_chars='*')
         self.password_textbox.set_size(lambda x: 1, lambda y: 1, lambda w: 17, lambda h: 0)
 
-        self.logo_label = label.MultilineLabel(self.stdscr, art.HEADER)
+        self.logo_label = widgets.MultilineLabel(self.stdscr, art.HEADER)
         self.logo_label.set_size(lambda x: math.floor((x-65)/2)+25, lambda y: math.floor((y-8)/2)-2, None, None)
-        self.motto_label = label.Label(self.stdscr, f'\x1b[31m{art.MOTTO}')
+        self.motto_label = widgets.Label(self.stdscr, f'\x1b[31m{art.MOTTO}')
         self.motto_label.set_size(lambda x: math.floor((x-65)/2)+47, lambda y: math.floor((y-8)/2)+6, None, None)
-        self.create_label = label.Label(self.stdscr, 'Or PRESS CTRL+N to create a new local user!')
+        self.create_label = widgets.Label(self.stdscr, 'Or PRESS CTRL+N to create a new local user!')
         self.create_label.set_size(lambda x: math.floor((x-34)/2), lambda y: math.floor((y-8)/2)+10, None, None)
 
         self.resize()

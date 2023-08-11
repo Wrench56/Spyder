@@ -4,7 +4,7 @@ import curses
 
 from widgets.label import Label
 from widgets.listview_e import ListViewE
-from widgets.listview_node import Node
+from widgets.listview_node import ListViewNode
 from widgets.widget import Widget
 
 from utils import keyboard, colors
@@ -14,7 +14,7 @@ class ListViewTabbed(Widget):
     def __init__(self, stdscr: object, width: int = 20, height: int = 100) -> None:
         super().__init__(stdscr)
 
-        self.tabs: Dict[str, List[Node]] = {'Default': [Node('Hello', [Node('A', [Node('1'), Node('2')], False), Node('B', [Node('1'), Node('2')])])], 'Chats': [Node('Hello', [Node('A', [Node('1'), Node('2')], False), Node('B', [Node('1'), Node('2')])])], 'SAAAAAAAAAAAAAAAE': [Node('E')], 'SBBBBBBBBBBBBBBBBBBBBBE': [Node('F')], 'SCCCCCCCCCCCCCCCCCCCCCCE': [Node('G')]}
+        self.tabs: Dict[str, List[ListViewNode]] = {}
 
         self.pad_cursor_x = 0
         self.start_item = 0
@@ -39,14 +39,14 @@ class ListViewTabbed(Widget):
         lx = self.lambda_x(x)
 
         sy, sx = self.stdscr.getbegyx()
+        colors.colored_addstr(self.stdscr, lx, ly, '<')
+        colors.colored_addstr(self.stdscr, self.lambda_w(x) + lx, ly, '>')  # type: ignore[misc]
 
-        colors.colored_addstr(self.stdscr, 1, 1, '<')
-        colors.colored_addstr(self.stdscr, self.lambda_w(x) + 1, 1, '>')  # type: ignore[misc]
+        for x_plc in (lx + 1, self.lambda_w(x)):  # type: ignore[misc]
+            colors.colored_addstr(self.stdscr, x_plc, ly - 1, '┬')
+            colors.colored_addstr(self.stdscr, x_plc, ly, '│')
 
-        for x_plc in (2, self.lambda_w(x)):  # type: ignore[misc]
-            colors.colored_addstr(self.stdscr, x_plc, 0, '┬')
-            colors.colored_addstr(self.stdscr, x_plc, 1, '│')
-
+        colors.colored_addstr(self.stdscr, lx - 1, ly + 1, f'├─┴{"─" * (self.lambda_w(x) - 3)}┴─┤')  # type: ignore[misc]
         self.stdscr.refresh()
 
         x_pos = 0
@@ -66,10 +66,12 @@ class ListViewTabbed(Widget):
 
         self.calculate_pad_scroll()
         self.tab_pad.refresh(0, self.pad_cursor_x, sy+ly, sx+lx+2, sy+ly, sx+lx+self.lambda_w(x)-4)  # type: ignore[misc] # noqa: E226
-        self.listview.set_buffer(self.tabs[list(self.tabs.keys())[self.cursor]])
 
-        self.sep_label.resize(x, 2)
-        self.sep_label.set_text(f'├─┴{"─" * (self.lambda_w(x) - 3)}┴─┤')  # type: ignore[misc]
+        # If there are no tabs, return
+        if not self.tabs:
+            return
+
+        self.listview.set_buffer(self.tabs[list(self.tabs.keys())[self.cursor]])
 
     # def horizontal_scroll(self, x: int) -> None:
     #    items_till_cursor = tuple(self.tabs.keys())[self.start_item:self.cursor + 1]
@@ -105,12 +107,14 @@ class ListViewTabbed(Widget):
                     if self.cursor > 0:
                         self.cursor -= 1
                         self.calculate_pad_scroll()
+                        self.listview.cursor = 0
                         self.draw()
                 # Next tab
                 elif self.lambda_w(x) + sx + 1 == mouse_event[1]:  # type: ignore[misc]
                     if self.cursor < len(self.tabs.keys()) - 1:
                         self.cursor += 1
                         self.calculate_pad_scroll()
+                        self.listview.cursor = 0
                         self.draw()
                 # Select tab with mouse
                 elif sx + 1 < mouse_event[1] < self.lambda_w(x) + sx + 1:  # type: ignore[misc]
@@ -119,5 +123,8 @@ class ListViewTabbed(Widget):
             return self.listview.input(key)
         else:
             return self.listview.input(key)
+
+        # Reset the cursor of the listview
+        self.listview.cursor = 0
         self.draw()
         return None

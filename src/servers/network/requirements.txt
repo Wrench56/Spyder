@@ -1,0 +1,3 @@
+PyYAML
+keyboard
+rsa

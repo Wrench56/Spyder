@@ -4,7 +4,7 @@ on:
     branches: [ main, dev ]
 
 jobs: 
-  build: 
+  lint: 
     runs-on: ubuntu-latest 
     steps: 
     - uses: actions/checkout@v2 
@@ -40,6 +40,7 @@ jobs:
 
     - name: Type checks with mypy
       run: |
+        mypy src/client --install-types --non-interactive
         mypy src/client --config-file=.mypy.ini
 
     - name: Security check with Bandit

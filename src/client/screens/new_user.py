@@ -1,9 +1,9 @@
 import curses
 
+import widgets
 from screens import screen
-from widgets import textbox, label, subwindow
-from utils import colors, keyboard, terminal, create_user
-from data.structs.new_user_struct import NewUserData
+from structs.new_user_struct import NewUserData
+from utils import colors, create_user, keyboard, terminal
 
 
 class NewUser(screen.Screen):
@@ -32,35 +32,35 @@ class NewUser(screen.Screen):
     def setup(self) -> None:
         self.set_min(68, 15)
 
-        self.username_win = subwindow.Subwindow(self.stdscr)
+        self.username_win = widgets.Subwindow(self.stdscr)
         self.username_win.set_size(lambda x: 5, lambda y: 2, lambda w: 20, lambda h: 3)
-        self.username_label = label.Label(self.username_win.get(), ' Username ')
+        self.username_label = widgets.Label(self.username_win.get(), ' Username ')
         self.username_label.set_size(lambda x: 1, lambda y: 0, None, None)
-        self.username_textbox = textbox.Textbox(self.username_win.get(), width=19, height=1)
+        self.username_textbox = widgets.Textbox(self.username_win.get(), width=19, height=1)
         self.username_textbox.set_size(lambda x: 1, lambda y: 1, lambda w: 17, lambda h: 0)
 
-        self.password_win = subwindow.Subwindow(self.stdscr)
+        self.password_win = widgets.Subwindow(self.stdscr)
         self.password_win.set_size(lambda x: 5, lambda y: 6, lambda w: 20, lambda h: 3)
-        self.password_label = label.Label(self.password_win.get(), ' Password ')
+        self.password_label = widgets.Label(self.password_win.get(), ' Password ')
         self.password_label.set_size(lambda x: 1, lambda y: 0, None, None)
-        self.password_textbox = textbox.Textbox(self.password_win.get(), width=19, height=1, show_chars='*')
+        self.password_textbox = widgets.Textbox(self.password_win.get(), width=19, height=1, show_chars='*')
         self.password_textbox.set_size(lambda x: 1, lambda y: 1, lambda w: 17, lambda h: 0)
 
-        self.password_conf_win = subwindow.Subwindow(self.stdscr)
+        self.password_conf_win = widgets.Subwindow(self.stdscr)
         self.password_conf_win.set_size(lambda x: 5, lambda y: 10, lambda w: 20, lambda h: 3)
-        self.password_conf_label = label.Label(self.password_conf_win.get(), ' Confirm Password ')
+        self.password_conf_label = widgets.Label(self.password_conf_win.get(), ' Confirm Password ')
         self.password_conf_label.set_size(lambda x: 1, lambda y: 0, None, None)
-        self.password_conf_textbox = textbox.Textbox(self.password_conf_win.get(), width=19, height=1, show_chars='*')
+        self.password_conf_textbox = widgets.Textbox(self.password_conf_win.get(), width=19, height=1, show_chars='*')
         self.password_conf_textbox.set_size(lambda x: 1, lambda y: 1, lambda w: 17, lambda h: 0)
 
-        self.status_win = subwindow.Subwindow(self.stdscr)
+        self.status_win = widgets.Subwindow(self.stdscr)
         self.status_win.set_size(lambda x: 30, lambda y: 2, lambda w: 36, lambda h: 11)
-        self.status_label = label.Label(self.status_win.get(), ' Status ')
+        self.status_label = widgets.Label(self.status_win.get(), ' Status ')
         self.status_label.set_size(lambda x: 1, lambda y: 0, None, None)
-        self.status_text_label = label.MultilineLabel(self.status_win.get(), self.format_status())
+        self.status_text_label = widgets.MultilineLabel(self.status_win.get(), self.format_status())
         self.status_text_label.set_size(lambda x: 1, lambda y: 1, None, None)
 
-        self.help_label = label.Label(self.stdscr, 'Navigate with KEY_UP & KEY_DOWN, press ENTER to continue!')
+        self.help_label = widgets.Label(self.stdscr, 'Navigate with KEY_UP & KEY_DOWN, press ENTER to continue!')
         self.help_label.set_size(lambda x: 7, lambda y: 15, None, None)
 
         self.resize()

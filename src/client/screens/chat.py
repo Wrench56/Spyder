@@ -1,13 +1,13 @@
 # flake8: noqa: E226
 
 import curses
+import logging
 import math
 
+import events
+import widgets
 from screens import screen
 from utils import terminal
-from widgets import subwindow, listview_tabbed
-
-from events import on_resize
 
 
 class Chat(screen.Screen):
@@ -29,15 +29,17 @@ class Chat(screen.Screen):
         self.logic()
 
     def setup(self) -> None:
-        on_resize.subscribe(self.resize)
+        events.resize.subscribe(self.resize)
         self.set_min(120, 25)
+        # Hide the cursor
+        curses.curs_set(0)
 
-        self.channel_win = subwindow.Subwindow(self.stdscr, True)
-        self.channel_lv = listview_tabbed.ListViewTabbed(self.channel_win.get(), width=200, height=10000)
-        self.chat_win = subwindow.Subwindow(self.stdscr, True)
-        self.info_win = subwindow.Subwindow(self.stdscr, True)
-        self.input_win = subwindow.Subwindow(self.stdscr, True)
-        self.special_win = subwindow.Subwindow(self.stdscr, True)
+        self.channel_win = widgets.Subwindow(self.stdscr, True)
+        self.channel_lv = widgets.ListViewTabbed(self.channel_win.get(), width=200, height=10000)
+        self.chat_win = widgets.Subwindow(self.stdscr, True)
+        self.info_win = widgets.Subwindow(self.stdscr, True)
+        self.input_win = widgets.Subwindow(self.stdscr, True)
+        self.special_win = widgets.Subwindow(self.stdscr, True)
 
         self.set_size()
 
@@ -54,15 +56,15 @@ class Chat(screen.Screen):
                 y, x = self.stdscr.getmaxyx()
                 curses.resize_term(y, x)
                 if self.resize_check(x, y):
-                    on_resize.trigger(x, y)
+                    events.resize.trigger(x, y)
             elif ch == curses.KEY_RESIZE:
                 self.stdscr.erase()
                 y, x = self.stdscr.getmaxyx()
                 curses.resize_term(y, x)
                 if self.resize_check(x, y):
-                    on_resize.trigger(x, y)
+                    events.resize.trigger(x, y)
             else:
-                print(self.channel_lv.input(ch))
+                logging.debug(self.channel_lv.input(ch))
 
     def set_size(self) -> None:
 
@@ -84,7 +86,7 @@ class Chat(screen.Screen):
         y, x = self.stdscr.getmaxyx()
         curses.resize_term(y, x)
         if self.resize_check(x, y):
-            on_resize.trigger(x, y)
+            events.resize.trigger(x, y)
 
     def resize(self, x: int, y: int) -> None:
         self.stdscr.erase()

@@ -2,6 +2,8 @@ name: Lint Client
 on: 
   pull_request: 
     branches: [ main, dev ]
+    paths:
+      - 'src/client/**'
 
 jobs: 
   lint: 
@@ -23,12 +25,7 @@ jobs:
 
     - name: Install project dependencies
       run: |
-        pip install colorama
-        pip install PyYAML
-        pip install cryptography
-        pip install rsa
-        pip install requests
-        pip install coloredlogs
+        pip install -r src/client/requirements.txt
 
     - name: Lint with flake8 
       run: | 

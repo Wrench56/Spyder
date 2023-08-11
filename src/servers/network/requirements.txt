@@ -1,3 +1,5 @@
 PyYAML
 keyboard
 rsa
+colorama
+colorlog

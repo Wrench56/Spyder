@@ -52,7 +52,6 @@ def start_curses(stdscr: object) -> None:
     # Open chat screen
     handler.load_plugins()
     chat.Chat(stdscr)
-    events.start.trigger()
 
     # Cleanup
     curses.endwin()

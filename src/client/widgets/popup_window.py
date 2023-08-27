@@ -63,7 +63,8 @@ class PopUp():
         self.draw()
 
         while True:
-            key = self.window.getch()
+            # curses.KEY_LEFT and .KEY_RIGHT do not work with window.getch()
+            key = self.stdscr.getch()
             if self.menus:
                 result = self.input(key)
                 if result is not None:

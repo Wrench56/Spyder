@@ -29,7 +29,7 @@ jobs:
 
     - name: Lint with flake8 
       run: | 
-        flake8 src/client --ignore=E501
+        flake8 src/client --ignore=E501,W503
 
     - name: Lint with Pylint
       run: |

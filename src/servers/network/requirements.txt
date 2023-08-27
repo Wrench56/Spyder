@@ -1,5 +1,6 @@
-PyYAML
-keyboard
-rsa
 colorama
 colorlog
+cryptography
+keyboard
+PyYAML
+rsa

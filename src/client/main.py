@@ -11,7 +11,6 @@ import colorama
 import yaml
 
 from screens import chat, login
-from plugins import handler
 
 from utils import net, art, colors, cursor
 from structs import login_structs
@@ -50,7 +49,7 @@ def start_curses(stdscr: object) -> None:
     del login_screen  # Not necessarily needed
 
     # Open chat screen
-    handler.load_plugins()
+    # TODO: Start plugin manager
     chat.Chat(stdscr)
 
     # Cleanup

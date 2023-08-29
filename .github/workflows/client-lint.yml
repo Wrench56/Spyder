@@ -33,7 +33,7 @@ jobs:
 
     - name: Lint with Pylint
       run: |
-        pylint src/client --recursive True --rcfile=.pylintrc --reports True || pylint-exit $? --error-fail --warn-fail
+        pylint src/client --recursive True --rcfile=.pylintrc --reports True --output-format=colorized || pylint-exit $? --error-fail --warn-fail
 
     - name: Type checks with mypy
       run: |

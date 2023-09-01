@@ -1,5 +1,6 @@
 # flake8: noqa
 
+from .floating_window import Float
 from .label import Label, MultilineLabel
 from .listview_e import ListViewE
 from .listview_node import ListViewNode

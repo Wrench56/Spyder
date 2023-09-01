@@ -8,7 +8,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-from utils.art import LOGIN_FILE_WARNING
+from utils import art, constants
 
 
 class StepFailed(Exception):
@@ -78,14 +78,14 @@ def _create_user_config(status_func: Callable[[str, str], None], username: str) 
 def _create_logins_file(status_func: Callable[[str, str], None], username: str, password: str, config_key: bytes) -> None:
     os.mkdir(f'./{username}/secrets')
     json_ = {
-        'VERSION': 1.0,
+        'VERSION': constants.VERSION,
         'USERNAME': username,
         'CONFIG_PASSWORD': config_key,
         'LAST_SEEN': ''
     }
 
     with open(f'./{username}/secrets/login.conf', 'wb') as lfile:
-        lfile.write(LOGIN_FILE_WARNING.encode())
+        lfile.write(art.LOGIN_FILE_WARNING.encode())
         lfile.write(_encrypt_json(json_, password))
         lfile.close()
 

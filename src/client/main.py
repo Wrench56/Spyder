@@ -12,11 +12,9 @@ import yaml
 
 from screens import chat, login
 
-from utils import net, art, colors, cursor
+from utils import net, art, colors, cursor, constants
 from structs import login_structs
 import events
-
-VERSION = '0.1.0'
 
 
 def main() -> None:
@@ -73,7 +71,7 @@ def infobox() -> None:
     print(f'| Platform: {"".rjust(26-len(plat))}{plat} |')
     print(f'|  └  Release: {"".rjust(23-len(rel))}{rel} |')
     print(f'| {"".ljust(36)} |')
-    print(f'| Version: {"".ljust(27-len(VERSION))}{VERSION} |')
+    print(f'| Version: {"".ljust(27-len(constants.VERSION))}{constants.VERSION} |')
     print('+' + 38 * '-' + '+')
     print()
 

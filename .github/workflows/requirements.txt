@@ -1,0 +1,7 @@
+colorama
+colorlog
+cryptography
+keyboard
+PyYAML
+requests
+rsa

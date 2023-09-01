@@ -8,6 +8,8 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+from utils.art import LOGIN_FILE_WARNING
+
 
 class StepFailed(Exception):
     def __init__(self, step: int, *args: List[Any]) -> None:
@@ -16,7 +18,7 @@ class StepFailed(Exception):
 
 
 # PARTIALLY WRITTEN BY CHAT GPT - 11.12.2022 - (WANTED TO TEST IT)
-def _encrypt_json(json_: Dict[Any, Any], key: str) -> str:
+def _encrypt_json(json_: Dict[Any, Any], key: str) -> bytes:
     password = key.encode()
     salt = b'salt_'
     kdf = PBKDF2HMAC(
@@ -31,7 +33,7 @@ def _encrypt_json(json_: Dict[Any, Any], key: str) -> str:
     json_bytes = str(json_).encode()
     encrypted_json = fernet.encrypt(json_bytes)
 
-    return encrypted_json.decode()
+    return encrypted_json
 
 
 def run_all(status_func: Callable[[str, str], None], new_user_struct: object) -> None:
@@ -40,8 +42,8 @@ def run_all(status_func: Callable[[str, str], None], new_user_struct: object) ->
     os.chdir(f'{src}/data/users/')
     try:
         _create_user_folder(status_func, new_user_struct.username)
-        _create_user_config(status_func, new_user_struct.username)
-        _create_logins_file(status_func, new_user_struct.username, new_user_struct.password)
+        config_key = _create_user_config(status_func, new_user_struct.username)
+        _create_logins_file(status_func, new_user_struct.username, new_user_struct.password, config_key)
         status_func('USER READY TO USE', ' OK ')
     except StepFailed as error:
         if error.step > 0:
@@ -61,31 +63,30 @@ def _create_user_folder(status_func: Callable[[str, str], None], username: str) 
     status_func('User directory created', ' OK ')
 
 
-def _create_user_config(status_func: Callable[[str, str], None], username: str) -> None:
+def _create_user_config(status_func: Callable[[str, str], None], username: str) -> bytes:
+    key = Fernet.generate_key()
+    fernet = Fernet(key)
     os.mkdir(f'./{username}/config')
-    with open(f'./{username}/config/config.yaml', 'w', encoding='utf-8') as cfile:
+    with open(f'./{username}/config/config.yaml', 'wb') as cfile:
+        cfile.write(fernet.encrypt(b'Hello World'))
         cfile.close()
     status_func('Config files created', ' OK ')
 
+    return key
 
-def _create_logins_file(status_func: Callable[[str, str], None], username: str, password: str) -> None:
+
+def _create_logins_file(status_func: Callable[[str, str], None], username: str, password: str, config_key: bytes) -> None:
     os.mkdir(f'./{username}/secrets')
-    json_ = {'VERSION': 1.0}
-    write_ = f'''
-    ////////// WARNING! //////////
-    // MANAGED BY SPYDER CHAT!  //
-    // DO NOT MODIFY ANYTHING   //
-    // BY HAND OR ELSE THIS     //
-    // CONFIG MIGHT BREAK.      //
-    // IF YOU ARE NOT THE OWNER //
-    // OF THIS USER GET OUT!    //
-    //////////////////////////////
+    json_ = {
+        'VERSION': 1.0,
+        'USERNAME': username,
+        'CONFIG_PASSWORD': config_key,
+        'LAST_SEEN': ''
+    }
 
-    {_encrypt_json(json_, password)}
-    '''
-
-    with open(f'./{username}/secrets/login.conf', 'w', encoding='utf-8') as lfile:
-        lfile.write(write_)
+    with open(f'./{username}/secrets/login.conf', 'wb') as lfile:
+        lfile.write(LOGIN_FILE_WARNING.encode())
+        lfile.write(_encrypt_json(json_, password))
         lfile.close()
 
     status_func('Login file created', ' OK ')

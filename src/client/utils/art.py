@@ -47,3 +47,15 @@ HEADER = """
 """
 
 MOTTO = 'Chatting safely!'
+
+LOGIN_FILE_WARNING = '''
+    ////////// WARNING! //////////
+    // MANAGED BY SPYDER CHAT!  //
+    // DO NOT MODIFY ANYTHING   //
+    // BY HAND OR ELSE THIS     //
+    // CONFIG MIGHT BREAK.      //
+    // IF YOU ARE NOT THE OWNER //
+    // OF THIS USER GET OUT!    //
+    //////////////////////////////
+
+'''

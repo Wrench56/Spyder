@@ -3,7 +3,7 @@ import textwrap
 from typing import List, Optional, Tuple
 
 from utils import colors, keyboard
-from widgets.label import MultilineLabel
+from widgets.multiline_label import MultilineLabel
 
 
 class PopUp():

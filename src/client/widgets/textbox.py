@@ -118,11 +118,17 @@ class Textbox(widget.Widget):
         for y, line in enumerate(self._buffer):
             self._pad.addstr(y, 0, ' ' * (len(line) + 1))  # +1 because of the backspace operation...
 
-    def get_text(self) -> str:
+    @property
+    def text(self) -> str:
         """
-        Return the text buffer.
+        Convert and return the text buffer.
 
         Returns:
-            str: The text buffer
+            str: The text in string
         """
         return '\n'.join(self._buffer)
+
+    @text.setter
+    def text(self, text: str) -> None:
+        self._buffer = text.split('\n')
+        self.update_cursor()

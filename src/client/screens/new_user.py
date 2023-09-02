@@ -134,20 +134,20 @@ class NewUser(screen.Screen):
             self.username_textbox.draw()
             self.refresh_focus(self.focus)
 
-        struct = NewUserData(self.username_textbox.get_text(), self.password_textbox.get_text())
-        if self.username_textbox.get_text() == '':
+        struct = NewUserData(self.username_textbox.text, self.password_textbox.text)
+        if self.username_textbox.text == '':
             self.set_new_status('Valid username', 'FAIL')
             cleanup()
             return
         self.set_new_status('Valid username', ' OK ')
 
-        if self.password_textbox.get_text() == '':
+        if self.password_textbox.text == '':
             self.set_new_status('Valid password', 'FAIL')
             cleanup()
             return
         self.set_new_status('Valid password', ' OK ')
 
-        if self.password_conf_textbox.get_text() == self.password_textbox.get_text():
+        if self.password_conf_textbox.text == self.password_textbox.text:
             self.set_new_status('Passwords match', ' OK ')
         else:
             self.set_new_status('Passwords match', 'FAIL')

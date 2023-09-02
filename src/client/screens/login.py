@@ -69,8 +69,8 @@ class Login(screen.Screen):
                 box_index = (1, 0)[box_index]
                 self.focus_cursor(box_index)
             elif ch == keyboard.KEY_ENTER:
-                username: str = self.username_textbox.get_text()
-                password: str = self.password_textbox.get_text()
+                username: str = self.username_textbox.text
+                password: str = self.password_textbox.text
                 if username == '' or password == '':  # nosec B105
                     logging.critical('No username and/or password provided!')
                     curses.endwin()

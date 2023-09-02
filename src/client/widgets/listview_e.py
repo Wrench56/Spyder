@@ -28,18 +28,18 @@ class ListViewE(ListView):
                     elements that can be added to the listview
         """
         super().__init__(stdscr, width, height)
-        self.buffer: List[ListViewNode] = []  # type: ignore[assignment]
-        self.flattend_buffer: List[ListViewNode] = []
+        self._buffer: List[ListViewNode] = []  # type: ignore[assignment]
+        self._flattend_buffer: List[ListViewNode] = []
 
-    def draw_items(self) -> None:
+    def _draw_items(self) -> None:
         line = 0
-        for item in self.buffer:
-            line = item.draw(self.pad, line)
+        for item in self._buffer:
+            line = item.draw(self._pad, line)
 
-    def handle_mouse_input(self, mouse_event: Tuple[int, int, int, int, Any], _: int, y: int) -> Optional[str]:
+    def _handle_mouse_input(self, mouse_event: Tuple[int, int, int, int, Any], _: int, y: int) -> Optional[str]:
         if mouse_event[4] == curses.BUTTON1_CLICKED:
             try:
-                node = self.flattend_buffer[self.pad_pos_y + mouse_event[2] - self.lambda_y(y) - 1]
+                node = self._flattend_buffer[self._pad_pos_y + mouse_event[2] - self._lambda_y(y) - 1]
                 if len(node.nodes) == 0:
                     return node.full_path
                 node.toggle_state()
@@ -49,12 +49,12 @@ class ListViewE(ListView):
                 pass
         return None
 
-    def selected_item(self) -> Optional[str]:
-        node = self.flattend_buffer[self.cursor]
+    def _selected_item(self) -> Optional[str]:
+        node = self._flattend_buffer[self._cursor]
         if len(node.nodes) == 0:
             return node.full_path
         node.toggle_state()
-        self.create_flattend_buffer()
+        self._create_flattend_buffer()
         self.draw()
 
         return None
@@ -68,7 +68,7 @@ class ListViewE(ListView):
                   ListViewNode(). The path should include all parent
                   nodes by their name separated by a "/" character.
                   After the last parent node, the target node's name
-                  should be specified. 
+                  should be specified.
                   For example: 'parent1/parent2/target'
 
         Returns:
@@ -76,7 +76,7 @@ class ListViewE(ListView):
                               target node was not found
         """
         path_segments = path.split('/')
-        for item in self.buffer:
+        for item in self._buffer:
             if item.name == path_segments[0]:
                 return item.get_node(path_segments[1:])
         return None
@@ -96,12 +96,12 @@ class ListViewE(ListView):
         self.get_item(path).add_node(node)
         node.set_full_path(path)
 
-    def create_flattend_buffer(self) -> None:
-        self.flattend_buffer = []
-        for node in self.buffer:
-            self.flattend_buffer.extend(node.flatten())
+    def _create_flattend_buffer(self) -> None:
+        self._flattend_buffer = []
+        for node in self._buffer:
+            self._flattend_buffer.extend(node.flatten())
 
-        self.cursor_border = len(self.flattend_buffer) - 1
+        self._cursor_border = len(self._flattend_buffer) - 1
 
     def set_buffer(self, buff: List[ListViewNode], refresh: bool = False) -> None:  # type: ignore[override]
         """
@@ -112,9 +112,9 @@ class ListViewE(ListView):
             refresh: If true, refresh the absolute path for
             all nodes. False by default
         """
-        self.buffer = buff
+        self._buffer = buff
         # This might be slow!
-        for node in self.buffer:
+        for node in self._buffer:
             node.set_full_path('', refresh=refresh)
-        self.create_flattend_buffer()
+        self._create_flattend_buffer()
         self.draw()

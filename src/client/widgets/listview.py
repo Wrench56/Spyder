@@ -22,39 +22,39 @@ class ListView(widget.Widget):
         """
         super().__init__(stdscr)
 
-        self.buffer: List[str] = []
+        self._buffer: List[str] = []
 
-        self.pad_pos_x = 0
-        self.pad_pos_y = 0
+        self._pad_pos_x = 0
+        self._pad_pos_y = 0
 
-        self.cursor = 0
-        self.cursor_border = height
+        self._cursor = 0
+        self._cursor_border = height
 
-        self.width = width
-        self.height = height
+        self._width = width
+        self._height = height
 
-        self.pad = curses.newpad(height, width)
-        self.pad.scrollok(True)
+        self._pad = curses.newpad(height, width)
+        self._pad.scrollok(True)
 
     def draw(self) -> None:
         """Draw the widget."""
-        x, y = super().getxy()
-        ly = self.lambda_y(y)
-        lx = self.lambda_x(x)
-        sy, sx = self.stdscr.getbegyx()
+        x, y = super()._getxy()
+        ly = self._lambda_y(y)
+        lx = self._lambda_x(x)
+        sy, sx = self._stdscr.getbegyx()
 
-        self.pad.erase()
-        self.stdscr.refresh()
+        self._pad.erase()
+        self._stdscr.refresh()
 
-        if self.buffer:
-            self.draw_items()
-            colors.colored_addstr(self.pad, 0, self.cursor, '>')
+        if self._buffer:
+            self._draw_items()
+            colors.colored_addstr(self._pad, 0, self._cursor, '>')
 
-        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # type: ignore[misc] # noqa: E226
+        self._pad.refresh(self._pad_pos_y, self._pad_pos_x, sy+ly, sx+lx, sy+ly+self._lambda_h(y), sx+lx+self._lambda_w(x))  # type: ignore[misc] # noqa: E226
 
-    def draw_items(self) -> None:
-        for i, item in enumerate(self.buffer):
-            colors.colored_addstr(self.pad, 2, i, item)
+    def _draw_items(self) -> None:
+        for i, item in enumerate(self._buffer):
+            colors.colored_addstr(self._pad, 2, i, item)
 
     def input(self, key: int) -> Optional[str]:
         """
@@ -69,36 +69,36 @@ class ListView(widget.Widget):
                            was pressed)
         """
         # When there are no items, return
-        if not self.buffer:
+        if not self._buffer:
             return None
 
         if key == curses.KEY_DOWN:
-            if self.cursor >= self.cursor_border or self.cursor >= self.height:
+            if self._cursor >= self._cursor_border or self._cursor >= self._height:
                 return None
-            self.cursor += 1
+            self._cursor += 1
             self.draw()
         elif key == curses.KEY_UP:
-            if self.cursor == 0:
+            if self._cursor == 0:
                 return None
-            self.cursor -= 1
+            self._cursor -= 1
             self.draw()
         elif key == keyboard.KEY_ENTER:
-            return self.selected_item()
+            return self._selected_item()
         elif key == curses.KEY_MOUSE:
-            x, y = self.getxy()
+            x, y = self._getxy()
             mouse_event = curses.getmouse()
-            if self.lambda_x(x) <= mouse_event[1] and self.lambda_x(x) + self.lambda_w(x) >= mouse_event[1]:  # type: ignore[misc]
-                if self.lambda_y(y) <= mouse_event[2] and self.lambda_y(y) + self.lambda_h(y) >= mouse_event[2]:  # type: ignore[misc]
-                    return self.handle_mouse_input(mouse_event, x, y)
+            if self._lambda_x(x) <= mouse_event[1] and self._lambda_x(x) + self._lambda_w(x) >= mouse_event[1]:  # type: ignore[misc]
+                if self._lambda_y(y) <= mouse_event[2] and self._lambda_y(y) + self._lambda_h(y) >= mouse_event[2]:  # type: ignore[misc]
+                    return self._handle_mouse_input(mouse_event, x, y)
         return None
 
-    def selected_item(self) -> Optional[str]:
-        return self.buffer[self.cursor]
+    def _selected_item(self) -> Optional[str]:
+        return self._buffer[self._cursor]
 
-    def handle_mouse_input(self, mouse_event: Tuple[int, int, int, int, Any], _: int, y: int) -> Optional[str]:
+    def _handle_mouse_input(self, mouse_event: Tuple[int, int, int, int, Any], _: int, y: int) -> Optional[str]:
         if mouse_event[4] == curses.BUTTON1_CLICKED:
             try:
-                return self.buffer[self.pad_pos_y + mouse_event[2] - self.lambda_y(y) - 1]
+                return self._buffer[self._pad_pos_y + mouse_event[2] - self._lambda_y(y) - 1]
             except IndexError:
                 pass
         return None
@@ -110,7 +110,7 @@ class ListView(widget.Widget):
         Args:
             name: The new item
         """
-        self.buffer.append(name)
+        self._buffer.append(name)
 
     def set_buffer(self, buff: List[str]) -> None:
         """
@@ -119,6 +119,15 @@ class ListView(widget.Widget):
         Args:
             buff: The new buffer which is going to be displayed
         """
-        self.buffer = buff
-        self.cursor_border = len(self.buffer) - 1
+        self._buffer = buff
+        self._cursor_border = len(self._buffer) - 1
         self.draw()
+
+    def set_cursor(self, new_pos: int) -> None:
+        """
+        Set the cursor of the listview to new_pos.
+
+        Args:
+            new_pos: The new y position for the cursor
+        """
+        self._cursor = new_pos

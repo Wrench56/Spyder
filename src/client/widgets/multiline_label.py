@@ -9,8 +9,8 @@ class MultilineLabel(Label):
 
     def draw(self) -> None:
         """Draw the widget."""
-        x, y = super().getxy()
+        x, y = super()._getxy()
         for i, line in enumerate(self.text.split('\n')):
-            colors.colored_addstr(self.stdscr, self.lambda_x(x), self.lambda_y(y) + i, str(line))
+            colors.colored_addstr(self._stdscr, self._lambda_x(x), self._lambda_y(y) + i, str(line))
 
-        self.stdscr.refresh()
+        self._stdscr.refresh()

@@ -25,36 +25,36 @@ class Textbox(widget.Widget):
         """
         super().__init__(stdscr)
 
-        self.buffer = ['']
+        self._buffer = ['']
 
-        self.pad_pos_x = 0
-        self.pad_pos_y = 0
+        self._pad_pos_x = 0
+        self._pad_pos_y = 0
 
-        self.cur_x = 0
-        self.cur_y = 0
-        self.width = width
-        self.height = height
+        self._cur_x = 0
+        self._cur_y = 0
+        self._width = width
+        self._height = height
 
-        self.show_chars = show_chars
+        self._show_chars = show_chars
 
-        self.pad = curses.newpad(self.height, self.width)
-        self.pad.scrollok(True)
+        self._pad = curses.newpad(self._height, self._width)
+        self._pad.scrollok(True)
 
     def draw(self) -> None:
         """Draw the widget."""
-        x, y = super().getxy()
-        ly = self.lambda_y(y)
-        lx = self.lambda_x(x)
-        self.move_cursor(lx, ly)
+        x, y = super()._getxy()
+        ly = self._lambda_y(y)
+        lx = self._lambda_x(x)
+        self._move_cursor(lx, ly)
 
         self.empty()
-        for i, line in enumerate(self.buffer):
-            if self.show_chars:
-                line = self.show_chars * len(line)  # type: ignore[assignment]
-            self.pad.addstr(i, 0, line)
+        for i, line in enumerate(self._buffer):
+            if self._show_chars:
+                line = self._show_chars * len(line)  # type: ignore[assignment]
+            self._pad.addstr(i, 0, line)
 
-        sy, sx = self.stdscr.getbegyx()
-        self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # type: ignore[misc] # noqa: E226
+        sy, sx = self._stdscr.getbegyx()
+        self._pad.refresh(self._pad_pos_y, self._pad_pos_x, sy+ly, sx+lx, sy+ly+self._lambda_h(y), sx+lx+self._lambda_w(x))  # type: ignore[misc] # noqa: E226
 
     def input(self, ch: int) -> None:
         """
@@ -63,60 +63,60 @@ class Textbox(widget.Widget):
         Args:
             ch: The pressed key's value
         """
-        x, y = super().getxy()
+        x, y = super()._getxy()
 
         if ch == keyboard.KEY_BACKSPACE:
-            if self.cur_x > 0:
-                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x - 1] + self.buffer[self.cur_y][(self.cur_x):]
-                self.cur_x -= 1
+            if self._cur_x > 0:
+                self._buffer[self._cur_y] = self._buffer[self._cur_y][:self._cur_x - 1] + self._buffer[self._cur_y][(self._cur_x):]
+                self._cur_x -= 1
         elif ch == keyboard.KEY_DELETE:
-            if self.cur_x < self.lambda_w(x):  # type: ignore[misc]
-                self.buffer[self.cur_y] = self.buffer[self.cur_y][:self.cur_x] + self.buffer[self.cur_y][(self.cur_x + 1):]
+            if self._cur_x < self._lambda_w(x):  # type: ignore[misc]
+                self._buffer[self._cur_y] = self._buffer[self._cur_y][:self._cur_x] + self._buffer[self._cur_y][(self._cur_x + 1):]
         elif ch == keyboard.KEY_ENTER:
-            if self.pad_pos_y + 1 < self.height:
-                self.cur_y += 1
-                self.cur_x = 0
-                self.buffer.append('')
+            if self._pad_pos_y + 1 < self._height:
+                self._cur_y += 1
+                self._cur_x = 0
+                self._buffer.append('')
         elif ch == curses.KEY_DOWN:
-            if self.pad_pos_y < self.pad.getyx()[0] - 1:
-                self.cur_y += 1
-                if self.cur_y > self.height:
-                    self.pad_pos_y += 1
+            if self._pad_pos_y < self._pad.getyx()[0] - 1:
+                self._cur_y += 1
+                if self._cur_y > self._height:
+                    self._pad_pos_y += 1
         elif ch == curses.KEY_UP:
-            if self.pad_pos_y > 0:
-                self.cur_y -= 1
-                self.pad_pos_y -= 1
+            if self._pad_pos_y > 0:
+                self._cur_y -= 1
+                self._pad_pos_y -= 1
         elif ch == curses.KEY_LEFT:
-            if self.cur_x > 0:
-                self.cur_x -= 1
+            if self._cur_x > 0:
+                self._cur_x -= 1
         elif ch == curses.KEY_RIGHT:
-            if self.cur_x < self.lambda_w(x):  # type: ignore[misc]
-                self.cur_x += 1
+            if self._cur_x < self._lambda_w(x):  # type: ignore[misc]
+                self._cur_x += 1
         else:
-            if self.cur_x < self.lambda_w(x):  # type: ignore[misc]
-                self.cur_x += 1
-                self.buffer[self.cur_y] += chr(ch)
+            if self._cur_x < self._lambda_w(x):  # type: ignore[misc]
+                self._cur_x += 1
+                self._buffer[self._cur_y] += chr(ch)
 
         self.draw()
 
-        lx, ly = self.lambda_x(x), self.lambda_y(y)
-        self.move_cursor(lx, ly)
+        lx, ly = self._lambda_x(x), self._lambda_y(y)
+        self._move_cursor(lx, ly)
 
-    def move_cursor(self, lx: int, ly: int) -> None:
-        sy, sx = self.stdscr.getbegyx()
-        cursor.move(sx + lx + self.cur_x, sy + ly + self.cur_y)
+    def _move_cursor(self, lx: int, ly: int) -> None:
+        sy, sx = self._stdscr.getbegyx()
+        cursor.move(sx + lx + self._cur_x, sy + ly + self._cur_y)
 
     def update_cursor(self) -> None:
         """Update the cursor's position."""
-        x, y = super().getxy()
-        lx, ly = self.lambda_x(x), self.lambda_y(y)
+        x, y = super()._getxy()
+        lx, ly = self._lambda_x(x), self._lambda_y(y)
 
-        self.move_cursor(lx, ly)
+        self._move_cursor(lx, ly)
 
     def empty(self) -> None:
         """Empty the text buffer."""
-        for y, line in enumerate(self.buffer):
-            self.pad.addstr(y, 0, ' ' * (len(line) + 1))  # +1 because of the backspace operation...
+        for y, line in enumerate(self._buffer):
+            self._pad.addstr(y, 0, ' ' * (len(line) + 1))  # +1 because of the backspace operation...
 
     def get_text(self) -> str:
         """
@@ -125,4 +125,4 @@ class Textbox(widget.Widget):
         Returns:
             str: The text buffer
         """
-        return '\n'.join(self.buffer)
+        return '\n'.join(self._buffer)

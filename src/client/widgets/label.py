@@ -20,10 +20,10 @@ class Label(widget.Widget):
 
     def draw(self) -> None:
         """Draw the widget."""
-        x, y = super().getxy()
-        colors.colored_addstr(self.stdscr, self.lambda_x(x), self.lambda_y(y), self.text)
+        x, y = super()._getxy()
+        colors.colored_addstr(self._stdscr, self._lambda_x(x), self._lambda_y(y), self.text)
 
-        self.stdscr.refresh()
+        self._stdscr.refresh()
 
     def set_text(self, text: str) -> None:
         """

@@ -15,15 +15,15 @@ class Widget(ABC):
 
     def __init__(self, stdscr: object) -> None:
         """Create the widget and initialize some variables."""
-        self.stdscr = stdscr
+        self._stdscr = stdscr
 
-        self.lambda_x: Callable[[int], int] = lambda x: -1
-        self.lambda_y: Callable[[int], int] = lambda y: -1
-        self.lambda_w: Optional[Callable[[int], int]] = None
-        self.lambda_h: Optional[Callable[[int], int]] = None
+        self._lambda_x: Callable[[int], int] = lambda _: -1
+        self._lambda_y: Callable[[int], int] = lambda _: -1
+        self._lambda_w: Optional[Callable[[int], int]] = None
+        self._lambda_h: Optional[Callable[[int], int]] = None
 
-        self.last_x: int = 0
-        self.last_y: int = 0
+        self._last_x: int = 0
+        self._last_y: int = 0
 
     def set_size(self, lambda_x: Callable[[int], int], lambda_y: Callable[[int], int], lambda_w: Optional[Callable[[int], int]], lambda_h: Optional[Callable[[int], int]]) -> None:
         """
@@ -55,13 +55,13 @@ class Widget(ABC):
                       This lambda function is not required for some
                       widgets, like label. Provide None if not needed
         """
-        self.lambda_x = lambda_x
-        self.lambda_y = lambda_y
-        self.lambda_w = lambda_w
-        self.lambda_h = lambda_h
+        self._lambda_x = lambda_x
+        self._lambda_y = lambda_y
+        self._lambda_w = lambda_w
+        self._lambda_h = lambda_h
 
-    def getxy(self) -> Tuple[int, int]:
-        return self.last_x, self.last_y
+    def _getxy(self) -> Tuple[int, int]:
+        return self._last_x, self._last_y
 
     def resize(self, x: int, y: int) -> None:
         """
@@ -71,8 +71,8 @@ class Widget(ABC):
             x: Parent window's width (bottom right corner's x)
             y: Parent window's height (bottom right corner's y)
         """
-        self.last_x = x
-        self.last_y = y
+        self._last_x = x
+        self._last_y = y
 
         self.draw()
 

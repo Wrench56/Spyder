@@ -1,3 +1,5 @@
+"""This module implements an enhanced listview widget with tabs."""
+
 from typing import List, Dict, Callable, Optional
 
 import curses
@@ -11,7 +13,25 @@ from utils import keyboard, colors
 
 
 class ListViewTabbed(Widget):
+    """
+    An enhanced listview widget with tabs.
+
+    Each tab contains a different (enhanced or regular) buffer of
+    items. When a tab is selected the buffer corresponding to that tab
+    will be displayed
+    """
+
     def __init__(self, stdscr: object, width: int = 20, height: int = 100) -> None:
+        """
+        Create the enhanced listview widget without displaying it.
+
+        Args:
+            stdscr: The parent window object (curses window)
+            width: The width of the pad. Default value is 20 characters
+            height: The height of the pad representing the maximum
+                    elements that can be added to the listview.
+                    Default value: 100 lines
+        """
         super().__init__(stdscr)
 
         self.tabs: Dict[str, List[ListViewNode]] = {}
@@ -27,13 +47,39 @@ class ListViewTabbed(Widget):
         self.tab_pad = curses.newpad(1, 1000)
         self.tab_pad.scrollok(True)
 
-    def set_size(self, lambda_x: Callable[[int], int], lambda_y: Callable[[int], int], lambda_w: Optional[Callable[[int], int]], lambda_h: Optional[Callable[[int], int]]) -> None:
+    def set_size(self, lambda_x: Callable[[int], int], lambda_y: Callable[[int], int], lambda_w: Callable[[int], int], lambda_h: Callable[[int], int]) -> None:
+        """
+        Specify the responsive size of the window with lambda functions.
+
+        Args:
+            lambda_x: A lambda function defining the upper left
+                      corner's x coordinate with the width of the
+                      parent window as input. The return value has to
+                      be a positive integer which fits in the
+                      boundaries defined by the parent window.
+            lambda_y: A lambda function defining the upper left
+                      corner's y coordinate with the height of the
+                      parent window as input. The return value has to
+                      be a positive integer which fits in the
+                      boundaries defined by the parent window.
+            lambda_w: A lambda function defining the bottom right
+                      corner's x coordinate with the width of the
+                      parent window as input. The return value has to
+                      be a positive integer which fits in the
+                      boundaries defined by the parent window.
+            lambda_h: A lambda function defining the bottom right
+                      corner's y coordinate with the height of the
+                      parent window as input. The return value has to
+                      be a positive integer which fits in the
+                      boundaries defined by the parent window.
+        """
         super().set_size(lambda_x, lambda_y, lambda_w, lambda_h)
 
         self.listview.set_size(self.lambda_x, lambda y: self.lambda_y(y) + 2, self.lambda_w, lambda h: self.lambda_h(h) - 2)  # type: ignore[misc]
         self.sep_label.set_size(lambda x: self.lambda_x(x) - 1, lambda _: 2, None, None)
 
     def draw(self) -> None:
+        """Draw the widget."""
         x, y = super().getxy()
         ly = self.lambda_y(y)
         lx = self.lambda_x(x)
@@ -85,6 +131,17 @@ class ListViewTabbed(Widget):
         self.pad_cursor_x = sum(map(len, items_till_cursor)) + len(items_till_cursor) * 3
 
     def input(self, key: int) -> Optional[str]:
+        """
+        Interpreters given keystrokes.
+
+        Args:
+            key: The pressed key's value
+
+        Returns:
+            Optional[str]: Returns the selected item or None if
+                           nothing was selected (e.g. KEY_DOWN
+                           was pressed or parent node expanded)
+        """
         if key == keyboard.KEY_TAB:
             # Next tab
             if self.cursor < len(self.tabs.keys()) - 1:

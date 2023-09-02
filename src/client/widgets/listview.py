@@ -1,3 +1,5 @@
+"""This module implements a listview widget with curses."""
+
 from typing import Tuple, List, Optional, Any
 import curses
 
@@ -6,7 +8,18 @@ from utils import keyboard, colors
 
 
 class ListView(widget.Widget):
+    """A scrollable listview widget with selectable elements."""
+
     def __init__(self, stdscr: object, width: int = 20, height: int = 100):
+        """
+        Create the listview without displaying it.
+
+        Args:
+            stdscr: The parent window object (curses window)
+            width: The width of the pad
+            height: The height of the pad representing the maximum
+                    elements that can be added to the listview
+        """
         super().__init__(stdscr)
 
         self.buffer: List[str] = []
@@ -24,6 +37,7 @@ class ListView(widget.Widget):
         self.pad.scrollok(True)
 
     def draw(self) -> None:
+        """Draw the widget."""
         x, y = super().getxy()
         ly = self.lambda_y(y)
         lx = self.lambda_x(x)
@@ -43,6 +57,17 @@ class ListView(widget.Widget):
             colors.colored_addstr(self.pad, 2, i, item)
 
     def input(self, key: int) -> Optional[str]:
+        """
+        Interpreter given keystrokes.
+
+        Args:
+            key: The pressed key's value
+
+        Returns:
+            Optional[str]: Returns the selected item or None if
+                           nothing was selected (e.g. KEY_DOWN
+                           was pressed)
+        """
         # When there are no items, return
         if not self.buffer:
             return None
@@ -79,9 +104,21 @@ class ListView(widget.Widget):
         return None
 
     def add_new(self, name: str) -> None:
+        """
+        Add a new item in the listview without updating the it.
+
+        Args:
+            name: The new item
+        """
         self.buffer.append(name)
 
     def set_buffer(self, buff: List[str]) -> None:
+        """
+        Display the provided list of items.
+
+        Args:
+            buff: The new buffer which is going to be displayed
+        """
         self.buffer = buff
         self.cursor_border = len(self.buffer) - 1
         self.draw()

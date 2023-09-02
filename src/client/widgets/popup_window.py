@@ -1,3 +1,10 @@
+"""
+This module implements a popup window.
+
+The popup window won't erase the content below it, as it creates
+a new curses window.
+"""
+
 import curses
 import textwrap
 from typing import List, Optional, Tuple
@@ -7,7 +14,23 @@ from widgets.multiline_label import MultilineLabel
 
 
 class PopUp():
+    """
+    A popup window with a title, message and maximum 3 menus.
+
+    The popup can block the main program's flow. Once an action
+    (menu) is selected, the action's name will be returned.
+    """
+
     def __init__(self, stdscr: object, message: str, title: Optional[str] = None) -> None:
+        """
+        Create the popup window without displaying it.
+
+        Args:
+            stdscr: The parent window object (curses window)
+            message: The message displayed in the body of the popup
+            title: An optional title displayed in the frame of the
+                   popup
+        """
         self.stdscr = stdscr
         self.title = title
         self.message = message
@@ -32,6 +55,27 @@ class PopUp():
         self.message_label.set_size(lambda _: 3, lambda _: 2, None, None)
 
     def add_menu(self, title: str) -> Optional['PopUp']:
+        """
+        Add a menu to the popup window.
+        
+        The menus are displayed in the bottom section of the popup.
+        The layout of the menu depends on the number of menus.
+        The layout is the following:
+            1 menu : left
+            2 menus: 1. right; 2. left
+            3 menus: 1. right; 2. middle; 3. left
+
+        Args:
+            title: The name of the menu
+
+        Returns:
+            Optional[PopUp]: Returns the popup object so that it can
+                             be chained.
+                             e.g.: popup.add_menu('a').add_menu('b')
+                             Returns None if the menu is already
+                             present in the menus list or if there are
+                             already 3 menus present
+        """
         if title in self.menus:
             return None
 
@@ -43,6 +87,13 @@ class PopUp():
 
     @property
     def menu_wrapping_l(self) -> str:
+        """
+        The left menu wrapping string.
+        
+        The menus are wrapped with the menu_wrapping. For example:
+        The menu "Ok" would look like "[ Ok ]" with the default
+        menu_wrapping. The menu_wrapping_l property being the "[ " part
+        """
         return self._menu_wrapping_l
 
     @menu_wrapping_l.setter
@@ -52,6 +103,13 @@ class PopUp():
 
     @property
     def menu_wrapping_r(self) -> str:
+        """
+        The right menu wrapping string.
+        
+        The menus are wrapped with the menu_wrapping. For example:
+        The menu "Ok" would look like "[ Ok ]" with the default
+        menu_wrapping. The menu_wrapping_r property being the " ]" part
+        """
         return self._menu_wrapping_r
 
     @menu_wrapping_r.setter
@@ -60,6 +118,17 @@ class PopUp():
         self.menu_wrapping_length = len(self.menu_wrapping_l) + len(self.menu_wrapping_r)
 
     def block(self) -> Optional[str]:
+        """
+        Block the main program's flow until a menu is selected.
+
+        If no menus were added, any pressed key will return from the
+        block.
+
+        Returns:
+            Optional[str]: Returns the selected menu or None if
+                           nothing was selected (e.g. KEY_LEFT
+                           was pressed)
+        """
         self.draw()
 
         while True:
@@ -76,6 +145,17 @@ class PopUp():
                 return None
 
     def input(self, key: int) -> Optional[str]:
+        """
+        Interpreters given keystrokes.
+        
+        Args:
+            key: The pressed key's value
+
+        Returns:
+            Optional[str]: Returns the selected menu or None if
+                           nothing was selected (e.g. KEY_LEFT
+                           was pressed)
+        """
         if key == keyboard.KEY_ENTER:
             # Cleanup
             self.window.erase()
@@ -105,12 +185,20 @@ class PopUp():
         return self.last_x, self.last_y
 
     def resize(self, x: int, y: int) -> None:
+        """
+        Resize the popup window.
+
+        Args:
+            x: Parent window's width (bottom right corner's x)
+            y: Parent window's height (bottom right corner's y)
+        """
         self.last_x = x
         self.last_y = y
 
         self.draw()
 
     def draw(self) -> None:
+        """Draw the widget."""
         x, y = self.getxy()
 
         extra_menu_height = 2 if self.menus else 0

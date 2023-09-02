@@ -1,3 +1,4 @@
+"""This module implements a textbox widget with curses."""
 import curses
 
 from widgets import widget
@@ -5,7 +6,23 @@ from utils import keyboard, cursor
 
 
 class Textbox(widget.Widget):
+    """A multi-line textbox widget with scroll capabilities."""
+
     def __init__(self, stdscr: object, width: int = 20, height: int = 100, show_chars: bool | str = False):
+        """
+        Create the textbox widget without displaying it.
+
+        Args:
+            stdscr: The parent window object (curses window)
+            width: The width of the pad
+            height: The height of the pad representing the maximum
+                    lines that can be written in the textbox
+            show_chars: Whether to show special characters instead
+                        the ones typed in. This can be useful for
+                        password inputs. By default it is False.
+                        Specify a string (character) to display that
+                        instead of the actual input.
+        """
         super().__init__(stdscr)
 
         self.buffer = ['']
@@ -24,6 +41,7 @@ class Textbox(widget.Widget):
         self.pad.scrollok(True)
 
     def draw(self) -> None:
+        """Draw the widget."""
         x, y = super().getxy()
         ly = self.lambda_y(y)
         lx = self.lambda_x(x)
@@ -39,6 +57,12 @@ class Textbox(widget.Widget):
         self.pad.refresh(self.pad_pos_y, self.pad_pos_x, sy+ly, sx+lx, sy+ly+self.lambda_h(y), sx+lx+self.lambda_w(x))  # type: ignore[misc] # noqa: E226
 
     def input(self, ch: int) -> None:
+        """
+        Interpreters given keystrokes.
+
+        Args:
+            ch: The pressed key's value
+        """
         x, y = super().getxy()
 
         if ch == keyboard.KEY_BACKSPACE:
@@ -83,14 +107,22 @@ class Textbox(widget.Widget):
         cursor.move(sx + lx + self.cur_x, sy + ly + self.cur_y)
 
     def update_cursor(self) -> None:
+        """Update the cursor's position."""
         x, y = super().getxy()
         lx, ly = self.lambda_x(x), self.lambda_y(y)
 
         self.move_cursor(lx, ly)
 
     def empty(self) -> None:
+        """Empty the text buffer."""
         for y, line in enumerate(self.buffer):
             self.pad.addstr(y, 0, ' ' * (len(line) + 1))  # +1 because of the backspace operation...
 
     def get_text(self) -> str:
+        """
+        Return the text buffer.
+
+        Returns:
+            str: The text buffer
+        """
         return '\n'.join(self.buffer)

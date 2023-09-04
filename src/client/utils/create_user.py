@@ -51,23 +51,24 @@ def run_all(status_func: Callable[[str, str], None], new_user_struct: object) ->
             shutil.rmtree(f'{os.getcwd()}/{new_user_struct.username}/')
     finally:
         os.chdir(prev_cwd)
+        logging.info(f'User directory "{new_user_struct.username}" created successfully!')
 
 
 def _create_user_folder(status_func: Callable[[str, str], None], username: str) -> None:
-    if os.path.exists(f'{os.getcwd()}/{username}'):
+    if os.path.exists(f'./{username}'):
         logging.critical('User already exists!')
         status_func('User directory created', 'FAIL')
         raise StepFailed(0)
 
-    os.mkdir(f'{os.getcwd()}/{username}')
+    os.mkdir(f'./{username}')
+    os.mkdir(f'./{username}/secrets')
     status_func('User directory created', ' OK ')
 
 
 def _create_user_config(status_func: Callable[[str, str], None], username: str) -> bytes:
     key = Fernet.generate_key()
     fernet = Fernet(key)
-    os.mkdir(f'./{username}/config')
-    with open(f'./{username}/config/config.yaml', 'wb') as cfile:
+    with open(f'./{username}/secrets/config.bin', 'wb') as cfile:
         cfile.write(fernet.encrypt(b'Hello World'))
         cfile.close()
     status_func('Config files created', ' OK ')
@@ -76,7 +77,6 @@ def _create_user_config(status_func: Callable[[str, str], None], username: str) 
 
 
 def _create_logins_file(status_func: Callable[[str, str], None], username: str, password: str, config_key: bytes) -> None:
-    os.mkdir(f'./{username}/secrets')
     json_ = {
         'VERSION': constants.VERSION,
         'USERNAME': username,
@@ -84,7 +84,7 @@ def _create_logins_file(status_func: Callable[[str, str], None], username: str, 
         'LAST_SEEN': ''
     }
 
-    with open(f'./{username}/secrets/login.conf', 'wb') as lfile:
+    with open(f'./{username}/secrets/login.bin', 'wb') as lfile:
         lfile.write(art.LOGIN_FILE_WARNING.encode())
         lfile.write(_encrypt_json(json_, password))
         lfile.close()

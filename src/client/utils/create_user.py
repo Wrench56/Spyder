@@ -1,39 +1,18 @@
-from typing import List, Dict, Callable, Any
+from typing import List, Callable, Any
 
 import os
 import logging
 import shutil
-import base64
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-from utils import art, constants
+from cryptography.fernet import Fernet
+
+from utils import art, constants, encryption
 
 
 class StepFailed(Exception):
     def __init__(self, step: int, *args: List[Any]) -> None:
         self.step: int = step
         super().__init__(*args)
-
-
-# PARTIALLY WRITTEN BY CHAT GPT - 11.12.2022 - (WANTED TO TEST IT)
-def _encrypt_json(json_: Dict[Any, Any], key: str) -> bytes:
-    password = key.encode()
-    salt = b'salt_'
-    kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),
-        length=32,
-        salt=salt,
-        iterations=100000
-    )
-    fernet_key = base64.urlsafe_b64encode(kdf.derive(password))
-    fernet = Fernet(fernet_key)
-
-    json_bytes = str(json_).encode()
-    encrypted_json = fernet.encrypt(json_bytes)
-
-    return encrypted_json
 
 
 def run_all(status_func: Callable[[str, str], None], new_user_struct: object) -> None:
@@ -67,9 +46,8 @@ def _create_user_folder(status_func: Callable[[str, str], None], username: str) 
 
 def _create_user_config(status_func: Callable[[str, str], None], username: str) -> bytes:
     key = Fernet.generate_key()
-    fernet = Fernet(key)
     with open(f'./{username}/secrets/config.bin', 'wb') as cfile:
-        cfile.write(fernet.encrypt(b'Hello World'))
+        cfile.write(encryption.encrypt('Hello World', key))
         cfile.close()
     status_func('Config files created', ' OK ')
 
@@ -80,13 +58,13 @@ def _create_logins_file(status_func: Callable[[str, str], None], username: str, 
     json_ = {
         'VERSION': constants.VERSION,
         'USERNAME': username,
-        'CONFIG_PASSWORD': config_key,
+        'CONFIG_PASSWORD': config_key.decode(),  # fernet.generate_key() is already base64 (urlsafe) encoded
         'LAST_SEEN': ''
     }
 
     with open(f'./{username}/secrets/login.bin', 'wb') as lfile:
         lfile.write(art.LOGIN_FILE_WARNING.encode())
-        lfile.write(_encrypt_json(json_, password))
+        lfile.write(encryption.encrypt_json(json_, password))
         lfile.close()
 
     status_func('Login file created', ' OK ')

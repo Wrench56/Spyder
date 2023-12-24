@@ -3,7 +3,3 @@ __pycache__
 
 # Folder for experimenting
 /playground
-
-# Ignore downloaded plugins
-/src/client/plugins/**
-!/src/client/plugins/base_plugin.py

@@ -3,3 +3,7 @@ logs
 
 # Ignore user configs & data
 data/users
+
+# Ignore downloaded plugins
+plugins/**
+!plugins/base_plugin.py

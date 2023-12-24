@@ -3,3 +3,6 @@ __pycache__
 
 # Folder for experimenting
 /playground
+
+# Ignore JetBrains configs (for now)
+.idea

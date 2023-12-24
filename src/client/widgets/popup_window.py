@@ -61,9 +61,9 @@ class PopUp():
         The menus are displayed in the bottom section of the popup.
         The layout of the menu depends on the number of menus.
         The layout is the following:
-            1 menu : left
-            2 menus: 1. right; 2. left
-            3 menus: 1. right; 2. middle; 3. left
+            1 menu : right
+            2 menus: 1. left; 2. right
+            3 menus: 1. left; 2. middle; 3. right
 
         Args:
             title: The name of the menu
@@ -261,7 +261,7 @@ class PopUp():
 
         # Calculate where to put each menu item
         if len(self._menus) == 1:
-            self._menu_offsets = (width - self._calc_menu_with_wrapping(0), 0, 0)
+            self._menu_offsets = (width - self._calc_menu_with_wrapping(0) - 3, 0, 0)
         elif len(self._menus) == 2:
             self._menu_offsets = (3, width - self._calc_menu_with_wrapping(1) - 3, 0)
         elif len(self._menus) == 3:

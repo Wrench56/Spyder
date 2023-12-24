@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
-def _string_to_key(key: str) -> bytes:
+def s2k(key: str) -> bytes:
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
@@ -26,9 +26,9 @@ def decrypt(encrypted_bytes: bytes, key: bytes) -> str:
     return Fernet(key).decrypt(encrypted_bytes).decode()
 
 
-def encrypt_json(json_: Dict[Any, Any], key: str) -> bytes:
-    return encrypt(json.dumps(json_), _string_to_key(key))
+def encrypt_json(json_: Dict[Any, Any], key: bytes) -> bytes:
+    return encrypt(json.dumps(json_), key)
 
 
-def decrypt_json(json_bytes: bytes, key: str) -> Dict[Any, Any]:
-    return json.loads(decrypt(json_bytes, _string_to_key(key)))
+def decrypt_json(json_bytes: bytes, key: bytes) -> Dict[Any, Any]:
+    return json.loads(decrypt(json_bytes, key)) or {}

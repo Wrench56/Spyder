@@ -47,7 +47,7 @@ def _create_user_folder(status_func: Callable[[str, str], None], username: str) 
 def _create_user_config(status_func: Callable[[str, str], None], username: str) -> bytes:
     key = Fernet.generate_key()
     with open(f'./{username}/secrets/config.bin', 'wb') as cfile:
-        cfile.write(encryption.encrypt('Hello World', key))
+        cfile.write(encryption.encrypt_json({'username': username}, key))
         cfile.close()
     status_func('Config files created', ' OK ')
 
@@ -64,7 +64,7 @@ def _create_logins_file(status_func: Callable[[str, str], None], username: str, 
 
     with open(f'./{username}/secrets/login.bin', 'wb') as lfile:
         lfile.write(art.LOGIN_FILE_WARNING.encode())
-        lfile.write(encryption.encrypt_json(json_, password))
+        lfile.write(encryption.encrypt_json(json_, encryption.s2k(password)))
         lfile.close()
 
     status_func('Login file created', ' OK ')

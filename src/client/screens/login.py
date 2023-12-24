@@ -1,13 +1,17 @@
 # flake8: noqa: E226
 
+from typing import Dict, Tuple, Any
+
 import curses
 import logging
 import math
 import sys
+import os
+import json
 
 import widgets
 from screens import new_user, screen
-from utils import art, keyboard, terminal
+from utils import art, keyboard, terminal, encryption
 
 
 class Login(screen.Screen):
@@ -71,7 +75,7 @@ class Login(screen.Screen):
             elif ch == keyboard.KEY_ENTER:
                 username: str = self.username_textbox.text
                 password: str = self.password_textbox.text
-                if username == '' or password == '':  # nosec B105
+                if not username or not password:
                     logging.critical('No username and/or password provided!')
                     curses.endwin()
                     sys.exit()
@@ -90,11 +94,65 @@ class Login(screen.Screen):
                 self.password_textbox.draw()
                 self.focus_cursor(box_index)
 
+            elif ch == 12:  # CTRL + L, unlock/lock & update config file
+                username, password = self._fetch_credentials()
+                if not username or not password:
+                    continue
+
+                # Lock config
+                if os.path.exists(f'data/users/{username}/config.json'):
+                    self._update_config(username, password)
+                    os.remove(f'data/users/{username}/config.json')
+                    continue
+
+                # Unlock config
+                with open(f'data/users/{username}/secrets/config.bin',
+                          'rb') as bfile:
+                    config = encryption.decrypt_json(bfile.read(), self._load_login_bytes(username, password)['CONFIG_PASSWORD'])
+                    bfile.close()
+                with open(f'data/users/{username}/config.json',
+                          'w', encoding='utf-8') as cfile:
+                    cfile.write(json.dumps(config, indent=4))
+                    cfile.close()
+            elif ch == 21:  # CTRL + U, update config file without locking
+                username, password = self._fetch_credentials()
+                if not username or not password:
+                    continue
+
+                self._update_config(username, password)
+
             else:
                 if box_index == 0:
                     self.username_textbox.input(ch)
                 else:
                     self.password_textbox.input(ch)
+
+    def _update_config(self, username: str, password: str) -> None:
+        key = self._load_login_bytes(username, password)['CONFIG_PASSWORD']
+        with open(f'data/users/{username}/config.json', 'r', encoding='utf-8') as cfile:
+            buffer = cfile.read()
+            cfile.close()
+        with open(f'data/users/{username}/secrets/config.bin', 'wb') as bfile:
+            bfile.write(encryption.encrypt_json(json.loads(buffer), key))
+            bfile.close()
+
+    def _load_login_bytes(self, username: str, password: str) -> Dict[Any, Any]:
+        with open(f'data/users/{username}/secrets/login.bin', 'rb') as file:
+            buffer = file.readlines()[10]
+            file.close()
+        return encryption.decrypt_json(buffer, encryption.s2k(password))
+
+    def _fetch_credentials(self) -> Tuple[str, str]:
+        username: str = self.username_textbox.text
+        password: str = self.password_textbox.text
+        if not username:
+            logging.critical('No username provided')
+        if not password:
+            logging.critical('No password provided')
+        if not os.path.exists(f'data/users/{username}'):
+            logging.critical('No such user')
+
+        return username, password
 
     def focus_cursor(self, box_index: int) -> None:
         if box_index == 0:

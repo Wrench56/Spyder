@@ -11,7 +11,7 @@ import json
 
 import widgets
 from screens import new_user, screen
-from utils import art, keyboard, terminal, encryption
+from utils import art, keyboard, terminal, encryption, constants
 
 
 class Login(screen.Screen):
@@ -80,6 +80,7 @@ class Login(screen.Screen):
                     curses.endwin()
                     sys.exit()
 
+                constants.CONFIG = self._get_config(username, password)
                 self.struct.username = username
                 self.struct.password = password
 
@@ -106,10 +107,7 @@ class Login(screen.Screen):
                     continue
 
                 # Unlock config
-                with open(f'data/users/{username}/secrets/config.bin',
-                          'rb') as bfile:
-                    config = encryption.decrypt_json(bfile.read(), self._load_login_bytes(username, password)['CONFIG_PASSWORD'])
-                    bfile.close()
+                config = self._get_config(username, password)
                 with open(f'data/users/{username}/config.json',
                           'w', encoding='utf-8') as cfile:
                     cfile.write(json.dumps(config, indent=4))
@@ -126,6 +124,12 @@ class Login(screen.Screen):
                     self.username_textbox.input(ch)
                 else:
                     self.password_textbox.input(ch)
+
+    def _get_config(self, username: str, password: str) -> Dict[Any, Any]:
+        with open(f'data/users/{username}/secrets/config.bin', 'rb') as bfile:
+            config = encryption.decrypt_json(bfile.read(), self._load_login_bytes(username, password)['CONFIG_PASSWORD'])
+            bfile.close()
+        return config
 
     def _update_config(self, username: str, password: str) -> None:
         key = self._load_login_bytes(username, password)['CONFIG_PASSWORD']

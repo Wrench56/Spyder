@@ -13,7 +13,7 @@ import yaml
 
 from screens import chat, login
 
-from utils import net, art, colors, cursor, constants
+from utils import net, art, colors, constants
 from structs import login_structs
 import events
 
@@ -39,7 +39,7 @@ def start_curses(stdscr: object) -> None:
     # Curses configuration
     curses.noecho()
     curses.mousemask(-1)
-    cursor.stdscr = stdscr
+    constants.STDSCR = stdscr
 
     colors.init()
 

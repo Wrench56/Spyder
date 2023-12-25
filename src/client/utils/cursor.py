@@ -7,15 +7,9 @@
 # the stdscr only, so the Python wrapper MAY be the
 # cause of the bug. Without further testing I don't
 # want to push the responsibility on someone else.
-#
-# This solution requires stdscr to be in the global
-# scope, that is something I don't line, as it
-# decreases Python's performance. I might change
-# this in the future.
 
-
-stdscr: object = None
+from utils import constants
 
 
 def move(new_x: int, new_y: int) -> None:
-    stdscr.move(new_y, new_x)
+    constants.STDSCR.move(new_y, new_x)

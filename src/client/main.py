@@ -70,7 +70,7 @@ def infobox() -> None:
     print(f'| Connection: {"".rjust(24-len(str(conn_)))}{conn_} |')
     print(f'| Local IP Address: {"".rjust(18-len(str(ip)))}{ip} |')
     print(f'| Platform: {"".rjust(26-len(plat))}{plat} |')
-    print(f'|  └  Release: {"".rjust(23-len(rel))}{textwrap.shorten(rel, width=24, placeholder="...")} |')
+    print(f'|  └ Release: {"".rjust(24-len(rel))}{textwrap.shorten(rel, width=24, placeholder="...")} |')
     print(f'| {"".ljust(36)} |')
     print(f'| Version: {"".ljust(27-len(constants.VERSION))}{constants.VERSION} |')
     print('+' + 38 * '-' + '+')

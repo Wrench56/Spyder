@@ -13,6 +13,8 @@ import yaml
 
 from screens import chat, login
 
+from api import manager
+
 from utils import net, art, colors, constants
 from structs import login_structs
 import events
@@ -47,8 +49,14 @@ def start_curses(stdscr: object) -> None:
     login_screen = login.Login(stdscr, login_data)
     del login_screen  # Not necessarily needed
 
+    # Load plugin manager
+    plugin_manager = manager.import_plugin(constants.CONFIG['plugin_manager'])
+    if not plugin_manager:
+        logging.critical('No plugin manager configured!')
+        quit(1)
+    plugin_manager.load()
+
     # Open chat screen
-    # TODO: Start plugin manager
     chat.Chat(stdscr)
 
     # Cleanup

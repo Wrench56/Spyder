@@ -28,7 +28,7 @@ def import_plugin(name: str) -> Optional[Plugin]:
                        else None
     """
     try:
-        plugin: Plugin = importlib.import_module(f'plugins.{name}.main').init()
+        plugin: Plugin = importlib.import_module(f'plugins.{name}.src.main').init()
         return plugin
     except TypeError:
         # Abstract class (Plugin) does not implement methods like load & unload

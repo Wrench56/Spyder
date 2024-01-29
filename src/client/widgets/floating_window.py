@@ -10,7 +10,7 @@ from widgets import widget
 class Float:
     """A floating window which does not erase the content below it."""
 
-    def __init__(self, title: str = '') -> None:
+    def __init__(self, title: str = '', border: bool = True) -> None:
         """
         Create the floating window without displaying it.
 
@@ -28,6 +28,7 @@ class Float:
         self.left_title_wrapping: str = ' '
         self.right_title_wrapping: str = ' '
         self.title = title
+        self.border = border
 
         self._widgets: Dict[str, widget.Widget] = {}
 
@@ -102,14 +103,15 @@ class Float:
         width = self._lambda_w(x)
         height = self._lambda_h(y)
 
-        self._window.mvwin(self._lambda_y(y), self._lambda_x(x))
         self._window.resize(height, width)
+        self._window.mvwin(self._lambda_y(y), self._lambda_x(x))
 
         y, x = self._window.getyx()
         for widget_ in self._widgets.values():
             widget_.resize(width, height)
 
-        self._window.box()
+        if self.border:
+            self._window.box()
         if self.title:
             colors.colored_addstr(self._window, 2, 0, f'{self.left_title_wrapping}{self.title}{self.right_title_wrapping}')
         self._window.refresh()

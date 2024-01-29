@@ -10,5 +10,6 @@ from .listview_tabbed import ListViewTabbed
 from .listview import ListView
 from .multiline_label import MultilineLabel
 from .popup_window import PopUp
+from .splitable_window import SplitWindow
 from .subwindow import Subwindow
 from .textbox import Textbox
